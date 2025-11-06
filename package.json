@@ -1,0 +1,13 @@
+{
+  "dependencies": {
+    "express": "^5.1.0",
+    "express-handlebars": "^8.0.1",
+    "mongodb": "^6.20.0",
+    "promises": "^0.2.5",
+    "prompt-sync": "^4.2.0"
+  },
+  "devDependencies": {
+    "@types/node": "^24.8.1",
+    "jsdoc": "^4.0.5"
+  }
+}

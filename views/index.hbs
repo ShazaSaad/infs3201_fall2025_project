@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="../Public/css/styles.css">
+  <title>Photo Albums</title>
+</head>
+
+<body>
+  <h1>Photo Albums</h1>
+
+  {{#if albums}}
+  <ul>
+    {{#each albums}}
+    <li>
+      <a href="/albums/{{name}}">{{name}}</a>
+    </li>
+    {{/each}}
+  </ul>
+  {{else}}
+  <p>No albums found.</p>
+  {{/if}}
+</body>
+
+</html>
