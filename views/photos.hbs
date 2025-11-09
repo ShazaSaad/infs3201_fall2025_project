@@ -11,6 +11,8 @@
     <p><a href="/photos/{{photo._id}}/edit">edit</a></p>
     <p>Title: {{photo.title}}</p>
     <p>Description:{{photo.description}}</p>
+    <p>Visibility:{{photo.visibility}}</p>
+
 
     <img src="/photos/{{photo.filename}}" onerror="this.src=this.src.replace('.jpg','.jpeg')" alt="{{photo.title}}"/>
     <p><a href="/">← Back to main page</a></p>

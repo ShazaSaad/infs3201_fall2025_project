@@ -9,20 +9,35 @@ async function listAlbums() {
   return albums
 }
 
+async function selectingPublicPhoto(){
+  //at the begginning getting photos of owner1 
+  let photos = await persistence.loadPhotos()
+  let publicPhotos = {}
+  for(let photo of photos){
+    //later to be chenged assuming owner 1 is for public users
+    if(photo.visibility === 'public'){
+      publicPhotos.push(photo)
+    }
+  }
+  return publicPhotos
+}
+
 /**
  * Updates the details of a photo.
  * @param {string} photoId - The ID of the photo to update.
  * @param {string} newTitle - The new title for the photo.
  * @param {string} newDescription - The new description for the photo.
+ * @param {string} visibility - to set visibility to public or private
  * @return {Promise<Object>} An object indicating success or error.
  */
-async function updatePhotoDetails(photoId, newTitle, newDescription) {
+async function updatePhotoDetails(photoId, newTitle, newDescription, newVisibility) {
   const photos = await persistence.loadPhotos()
 
   for (let i = 0; i < photos.length; i++) {
     if (photos[i]._id == photoId || photos[i].id == photoId) {
       if (newTitle) photos[i].title = newTitle
       if (newDescription) photos[i].description = newDescription
+      if(newVisibility.trim().toLowerCase()==='public' || newVisibility.trim().toLowerCase()==='private') photo[i].visibility =newVisibility.trim().toLowerCase()
 
       await persistence.savePhotos(photos)
       return { success: true, data: photos[i] }

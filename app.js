@@ -86,7 +86,8 @@ app.get('/photos/:id/edit', async (req, res) => {
 app.post('/photos/:id/edit', async (req, res) => {
   const photoId = req.params.id
   const { title, description } = req.body
-  await business.updatePhotoDetails(photoId, title, description)
+  let phototype =req.body.visibility
+  await business.updatePhotoDetails(photoId, title, description ,phototype)
   res.redirect(`/photos/${photoId}`)
 })
 
