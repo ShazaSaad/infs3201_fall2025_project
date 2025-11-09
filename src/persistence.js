@@ -35,13 +35,14 @@ async function loadPhotos() {
  * Adding visibility field to each photo
  * and setting it to puplic as defualt
  */
+/*
 async function addingVisibilityParam() {
     await connectDatabase()
     const db = client.db('infs3201_fall2025')
     const photosCollection = db.collection('photos')
     await photosCollection.updateMany({} , 
         {$set : {visibitlity:"public"}})
-}
+}*/
 //addingVisibilityParam()
 
 /**
