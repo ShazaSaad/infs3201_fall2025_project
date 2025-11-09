@@ -27,8 +27,22 @@ async function loadPhotos() {
     const db = client.db('infs3201_fall2025')
     const photosCollection = db.collection('photos')
     const photos = await photosCollection.find({}).toArray()
+    console.log(photos)
     return photos
 }
+
+/**
+ * Adding visibility field to each photo
+ * and setting it to puplic as defualt
+ */
+async function addingVisibilityParam() {
+    await connectDatabase()
+    const db = client.db('infs3201_fall2025')
+    const photosCollection = db.collection('photos')
+    await photosCollection.updateMany({} , 
+        {$set : {visibitlity:"public"}})
+}
+//addingVisibilityParam()
 
 /**
  * Saves the provided array of photos to the 'photos' collection in the database.
