@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/css/styles.css">
+    <title>Registration</title>
+</head>
+<body>
+    {{#if message}}
+        <div style="color: red;">{{message}}</div>
+    {{/if}}
+    <h1>Registration forum</h1>
+    <form method="post">
+        Username: <input name="username"><br>
+        Password: <input name="password" type="password"><br>
+        Cofirm Password: <input name="confPassword" type="password"><br>
+        <input type="submit">
+    </form>
+</body>
+</html>
