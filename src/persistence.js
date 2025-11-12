@@ -28,7 +28,7 @@ async function loadPhotos() {
     const db = client.db('infs3201_fall2025')
     const photosCollection = db.collection('photos')
     const photos = await photosCollection.find({}).toArray()
-    console.log(photos)
+    // console.log(photos)
     return photos
 }
 
