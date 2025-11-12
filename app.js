@@ -5,7 +5,6 @@ const path = require('path')
 const business = require('./src/business')
 
 
-
 // Create Express app
 const app = express()
 
@@ -28,6 +27,51 @@ app.use(express.static(path.join(__dirname, 'public')))
  * GET /
  */
 app.get('/', async (req, res) => {
+  let message = req.query.message
+
+  res.render('login', {
+    layout: undefined,
+    message: message
+  })
+})
+
+app.post('/', async (req, res) => {
+  let username = req.body.username
+  let password = req.body.password
+
+  let valid = await business.validateUser(username, password)
+  if (valid) {
+    res.redirect('/main')
+    return
+  }
+  res.redirect('/?message=Invalid Credentials')
+})
+
+app.get('/register', async (req, res) => {
+  let message = req.query.message
+  res.render('registration', { layout: undefined, message: message })
+})
+
+app.post('/register', async (req, res) => {
+  let username = req.body.username
+  let password = req.body.password
+  let confPassword = req.body.confPassword
+
+  if (password !== confPassword) {
+    res.redirect('/register?message=Passwords do not match')
+    return
+  }
+
+  await business.register(username, password)
+  // there is no /login route in this app; redirect to the root login page
+  res.redirect('/?message=You were successfully registered')
+})
+
+/**
+ * Renders the homepage with a list of albums.  
+ * GET /
+ */
+app.get('/main', async (req, res) => {
   try {
     const albums = await business.listAlbums()
     res.render('index', { albums, layout: false })
@@ -36,7 +80,7 @@ app.get('/', async (req, res) => {
   }
 })
 
-/**
+/** 
  * Renders a specific album page with its photos.  
  * GET /albums/:name
  */
@@ -87,12 +131,10 @@ app.get('/photos/:id/edit', async (req, res) => {
 app.post('/photos/:id/edit', async (req, res) => {
   const photoId = req.params.id
   const { title, description } = req.body
-  let phototype =req.body.visibility
-  await business.updatePhotoDetails(photoId, title, description ,phototype)
+  let phototype = req.body.visibility
+  await business.updatePhotoDetails(photoId, title, description, phototype)
   res.redirect(`/photos/${photoId}`)
 })
-
-
 
 // Start the server
 app.listen(8000, () => console.log('Server running'))
