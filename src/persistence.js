@@ -1,4 +1,5 @@
 const { MongoClient } = require('mongodb')
+const fs = require('fs')
 
 let client = undefined
 
@@ -71,8 +72,55 @@ async function loadAlbums() {
     return albums
 }
 
+async function validateUser(username, password) {
+    try {
+        await connectDatabase()
+        const db = client.db('infs3201_fall2025')
+        const usersCollection = db.collection('users')
+        const user = await usersCollection.findOne({ username, password })
+        return user ? true : false
+    } catch (err) {
+        console.error('Error during login check', err)
+        return false
+    }
+}
+
+async function register(userInfo) {
+    try {
+        await connectDatabase()
+        const db = client.db('infs3201_fall2025')
+        const usersCollection = db.collection('users')
+
+        // Check if user already exists
+        const existingUser = await usersCollection.findOne({ username: userInfo.username })
+        if (existingUser) {
+            return { error: 'User already exists' }
+        }
+
+        // Assigning the user ID
+        let userID = 1
+        const lastUser = await usersCollection.find().sort({ userID: -1 }).limit(1).toArray()
+        if (lastUser.length > 0) {
+            userID = lastUser[0].userID + 1
+        }
+
+        userInfo.userID = userID
+
+        // Inserting the new user into the database
+        const result = await usersCollection.insertOne(userInfo)
+        return { success: true, userId: result.insertedId }
+    } catch (err) {
+        console.error('Error during registration', err)
+        return { error: 'Registration failed' }
+    }
+}
+
+
 module.exports = {
     loadPhotos,
     savePhotos,
-    loadAlbums
+    loadAlbums,
+    validateUser,
+    register
 }
+

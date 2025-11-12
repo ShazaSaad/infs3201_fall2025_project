@@ -98,10 +98,24 @@ async function getPhotoDetails(photoId) {
   return null
 }
 
+async function validateUser(username, password) {
+    return await persistence.validateUser(username, password)
+}
+
+async function register(username, password) {
+    let userInfo = {
+        username: username,
+        password: password
+    }
+    return await persistence.register(userInfo)
+}
+
 
 module.exports = {
   listAlbums,
   updatePhotoDetails,
   albumPhotoList,
-  getPhotoDetails
+  getPhotoDetails, 
+  validateUser,
+  register
 }
