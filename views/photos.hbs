@@ -1,20 +1,27 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="/css/styles.css">
     <title>Photo</title>
 </head>
+
 <body>
     <h1>Photo Details</h1>
     <p><a href="/photos/{{photo._id}}/edit">edit</a></p>
     <p>Title: {{photo.title}}</p>
     <p>Description:{{photo.description}}</p>
+    <p>Comments: {{photo.Comments}}</p>
     <p>Visibility:{{photo.visibility}}</p>
 
-
-    <img src="/photos/{{photo.filename}}" onerror="this.src=this.src.replace('.jpg','.jpeg')" alt="{{photo.title}}"/>
+    <img src="/photos/{{photo.filename}}" onerror="this.src=this.src.replace('.jpg','.jpeg')" alt="{{photo.title}}" />
+     <form action="/photos/:id" method="post">
+        <label for="comments"> Comment: </label>
+        <input type="text" id="comments" name="comments">
+    </form>
     <p><a href="/">← Back to main page</a></p>
 </body>
+
 </html>
