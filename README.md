@@ -62,6 +62,8 @@ INFS3201_FALL2025_PROJECT/
  │   ├─ albums.hbs
  │   ├─ photos.hbs
  │   ├─ error.hbs
+ │   ├─ login.hbs
+ │   ├─ registration.hbs
  │   └── editphoto.hbs
  ├─ .gitignore
  ├─ app.js
@@ -89,7 +91,7 @@ mongodb+srv://60301815:60301815@60301815.kxwbpk3.mongodb.net/
 1. **Clone the repository**
 
    ```bash
-   git clone https://github.com/ShazaSaad/infs3201_fall2025_project
+   git clone https://github.com/ShazaSaad/infs3201_fall2025_project.git
    ```
 
 2. **Install dependencies**
@@ -122,7 +124,7 @@ All new Phase 1 functionality builds upon that foundation.
 
 ---
 
-## 🛠️ Future Improvements (Phase 2 Preview)
+## Future Improvements (Phase 2 Preview)
 
 * Album galleries with thumbnail grids
 * Email notification system for photo comments
