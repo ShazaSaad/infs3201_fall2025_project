@@ -102,10 +102,11 @@ async function validateUser(username, password) {
     return await persistence.validateUser(username, password)
 }
 
-async function register(username, password) {
+async function register(email, username, password) {
     let userInfo = {
         username: username,
-        password: password
+        password: password, 
+        email: email
     }
     return await persistence.register(userInfo)
 }

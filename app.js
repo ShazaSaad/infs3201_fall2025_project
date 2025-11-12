@@ -53,6 +53,7 @@ app.get('/register', async (req, res) => {
 })
 
 app.post('/register', async (req, res) => {
+  let email = req.body.email
   let username = req.body.username
   let password = req.body.password
   let confPassword = req.body.confPassword
@@ -62,7 +63,7 @@ app.post('/register', async (req, res) => {
     return
   }
 
-  await business.register(username, password)
+  await business.register(email, username, password)
   // there is no /login route in this app; redirect to the root login page
   res.redirect('/?message=You were successfully registered')
 })
