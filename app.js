@@ -34,13 +34,15 @@ app.get('/', async (req, res) => {
     message: message
   })
 })
+let ownerId =0
 
 app.post('/', async (req, res) => {
   let username = req.body.username
   let password = req.body.password
-
+  // validateUser if true returns object {status: true ,userId: user.userID}
   let valid = await business.validateUser(username, password)
-  if (valid) {
+  ownerId= valid.userId
+  if (valid.status) {
     res.redirect('/main')
     return
   }
@@ -88,7 +90,7 @@ app.get('/main', async (req, res) => {
 app.get('/albums/:name', async (req, res) => {
   try {
     const albumName = req.params.name
-    const result = await business.albumPhotoList(albumName)
+    const result = await business.albumPhotoList(albumName, ownerId)
 
     if (result.error) {
       res.status(404).render('error', { message: result.error, layout: false })
@@ -121,12 +123,12 @@ app.get('/photos/:id', async (req, res) => {
 
 app.post('/photos/:id/comment', async (req, res) => {
   const photoId = req.params.id
-  const { username, content } = req.body
-  if (!username || !content) {
+  const { userID, content } = req.body
+  if (!userID || !content) {
     res.redirect(`/photos/${photoId}?message=Username and content are required`)
     return
   }
-  await business.addComment(photoId, username, content)
+  await business.addComment(photoId, userID, content)
   res.redirect(`/photos/${photoId}`)
 })
 
@@ -144,7 +146,7 @@ app.get('/photos/:id/edit', async (req, res) => {
 app.post('/photos/:id/edit', async (req, res) => {
   const photoId = req.params.id
   const { title, description } = req.body
-  let phototype = req.body.visibility
+  const phototype = req.body.visibility
   await business.updatePhotoDetails(photoId, title, description, phototype)
   res.redirect(`/photos/${photoId}`)
 })

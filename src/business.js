@@ -9,18 +9,6 @@ async function listAlbums() {
   return albums
 }
 
-async function selectingPublicPhoto(){
-  //at the begginning getting photos of owner1 
-  let photos = await persistence.loadPhotos()
-  let publicPhotos = {}
-  for(let photo of photos){
-    //later to be chenged assuming owner 1 is for public users
-    if(photo.visibility === 'public'){
-      publicPhotos.push(photo)
-    }
-  }
-  return publicPhotos
-}
 
 /**
  * Updates the details of a photo.
@@ -52,11 +40,11 @@ async function updatePhotoDetails(photoId, newTitle, newDescription, newVisibili
   * @param {string} albumName - The name of the album.
   * @return {Promise<Object>} An object containing either the list of photos or an error message.
   */
-async function albumPhotoList(albumName) {
+async function albumPhotoList(albumName, ownerID) {
   const albums = await persistence.loadAlbums()
   const photos = await persistence.loadPhotos()
 
-  let album = null
+  let album;
   for (let i = 0; i < albums.length; i++) {
     if (albums[i].name.toLowerCase() === albumName.toLowerCase()) {
       album = albums[i]
@@ -73,14 +61,20 @@ async function albumPhotoList(albumName) {
     const photo = photos[i]
     for (let j = 0; j < photo.albums.length; j++) {
       if (photo.albums[j] == album._id || photo.albums[j] == album.id) {
-        foundPhotos.push(photo)
-        break
+        if(photo.visibility == "public" || Number(photo.owner) ===Number(ownerID)){
+          foundPhotos.push(photo)
+          break
+        }
+        
       }
     }
   }
 
   return { success: true, data: foundPhotos, album }
 }
+
+
+
 
 /**
  * Retrieves the details of a specific photo by its ID.
@@ -111,15 +105,17 @@ async function register(email, username, password) {
     return await persistence.register(userInfo)
 }
 
-async function addComment(photoId, username, text) {
+
+
+async function addComment(photoId, userID, text) {
   if(!text || !text.trim() ) {
     return { error: 'Comment text cannot be empty.' }
   }
   const comment = {
     photoId: photoId,
-    username: username,
-    text: text,
-    timestamp: new Date()
+    userID: userID,
+    text: text.trim(),
+    timestamp: new Date().toISOString()
   }
   await persistence.saveComment(comment)
   return { success: true }
@@ -138,4 +134,5 @@ module.exports = {
   register,
   addComment,
   getComments
+  
 }
