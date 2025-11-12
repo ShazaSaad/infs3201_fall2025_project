@@ -23,7 +23,7 @@
     <ul>
         {{#each comments}}
         <li>
-            <strong>{{username}}</strong> ({{date}}): {{text}}
+            <strong>{{userID}}</strong> ({{date}}): {{text}}
         </li>
         {{/each}}
     </ul>
@@ -33,8 +33,8 @@
 
     <hr>
     <form action="/photos/{{photo._id}}/comment" method="POST">
-        <label for="username">Username:</label><br>
-        <input type="text" id="username" name="username", value="{{photo.owner}}"><br><br>
+        <label for="userID">userID:</label><br>
+        <input type="text" id="userID" name="userID" value="{{photo.owner}}"><br><br>
 
         <label for="text">Comment:</label><br>
         <textarea id="text" name="text" rows="3" cols="40" required></textarea><br><br>

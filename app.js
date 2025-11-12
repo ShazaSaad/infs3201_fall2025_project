@@ -121,12 +121,12 @@ app.get('/photos/:id', async (req, res) => {
 
 app.post('/photos/:id/comment', async (req, res) => {
   const photoId = req.params.id
-  const { username, content } = req.body
-  if (!username || !content) {
+  const { userID, content } = req.body
+  if (!userID || !content) {
     res.redirect(`/photos/${photoId}?message=Username and content are required`)
     return
   }
-  await business.addComment(photoId, username, content)
+  await business.addComment(photoId, userID, content)
   res.redirect(`/photos/${photoId}`)
 })
 
@@ -144,7 +144,7 @@ app.get('/photos/:id/edit', async (req, res) => {
 app.post('/photos/:id/edit', async (req, res) => {
   const photoId = req.params.id
   const { title, description } = req.body
-  let phototype = req.body.visibility
+  const phototype = req.body.visibility
   await business.updatePhotoDetails(photoId, title, description, phototype)
   res.redirect(`/photos/${photoId}`)
 })

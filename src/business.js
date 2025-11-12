@@ -111,13 +111,13 @@ async function register(email, username, password) {
     return await persistence.register(userInfo)
 }
 
-async function addComment(photoId, username, text) {
+async function addComment(photoId, userID, text) {
   if(!text || !text.trim() ) {
     return { error: 'Comment text cannot be empty.' }
   }
   const comment = {
     photoId: photoId,
-    username: username,
+    userID: userID,
     text: text,
     timestamp: new Date()
   }
