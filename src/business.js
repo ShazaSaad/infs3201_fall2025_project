@@ -111,12 +111,31 @@ async function register(email, username, password) {
     return await persistence.register(userInfo)
 }
 
+async function addComment(photoId, username, text) {
+  if(!text || !text.trim() ) {
+    return { error: 'Comment text cannot be empty.' }
+  }
+  const comment = {
+    photoId: photoId,
+    username: username,
+    text: text,
+    timestamp: new Date()
+  }
+  await persistence.saveComment(comment)
+  return { success: true }
+}
 
+async function getComments(photoId) {
+  const comments = await persistence.loadComments(photoId)
+  return comments
+}
 module.exports = {
   listAlbums,
   updatePhotoDetails,
   albumPhotoList,
   getPhotoDetails, 
   validateUser,
-  register
+  register,
+  addComment,
+  getComments
 }
