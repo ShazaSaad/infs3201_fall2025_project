@@ -9,18 +9,6 @@ async function listAlbums() {
   return albums
 }
 
-async function selectingPublicPhoto(){
-  //at the begginning getting photos of owner1 
-  let photos = await persistence.loadPhotos()
-  let publicPhotos = {}
-  for(let photo of photos){
-    //later to be chenged assuming owner 1 is for public users
-    if(photo.visibility === 'public'){
-      publicPhotos.push(photo)
-    }
-  }
-  return publicPhotos
-}
 
 /**
  * Updates the details of a photo.
@@ -81,6 +69,18 @@ async function albumPhotoList(albumName) {
 
   return { success: true, data: foundPhotos, album }
 }
+async function selectingPhoto(ownerID ){
+  //at the begginning getting photos of owner1 
+  let photos = await persistence.loadPhotos()
+  let selectedPhotos = []
+  for(let photo of photos){
+    //later to be chenged assuming owner 1 is for public users
+    if(photo.visibility === 'public'|| Number(photo.owner) === Number(ownerID) ){
+      selectedPhotos.push(photo)
+    }
+  }
+  return selectedPhotos
+}
 
 /**
  * Retrieves the details of a specific photo by its ID.
@@ -110,6 +110,8 @@ async function register(email, username, password) {
     }
     return await persistence.register(userInfo)
 }
+
+
 
 async function addComment(photoId, userID, text) {
   if(!text || !text.trim() ) {
