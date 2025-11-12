@@ -34,13 +34,15 @@ app.get('/', async (req, res) => {
     message: message
   })
 })
+let ownerId =0
 
 app.post('/', async (req, res) => {
   let username = req.body.username
   let password = req.body.password
-
+  // validateUser if true returns object {status: true ,userId: user.userID}
   let valid = await business.validateUser(username, password)
-  if (valid) {
+  ownerId= valid.userId
+  if (valid.status) {
     res.redirect('/main')
     return
   }
@@ -88,7 +90,7 @@ app.get('/main', async (req, res) => {
 app.get('/albums/:name', async (req, res) => {
   try {
     const albumName = req.params.name
-    const result = await business.albumPhotoList(albumName)
+    const result = await business.albumPhotoList(albumName, ownerId)
 
     if (result.error) {
       res.status(404).render('error', { message: result.error, layout: false })

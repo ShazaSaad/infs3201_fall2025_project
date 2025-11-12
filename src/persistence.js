@@ -79,7 +79,7 @@ async function validateUser(username, password) {
         const db = client.db('infs3201_fall2025')
         const usersCollection = db.collection('users')
         const user = await usersCollection.findOne({ username, password })
-        return user ? true : false
+        return user ? {status:true,userId: user.userID} : false
     } catch (err) {
         console.error('Error during login check', err)
         return false
