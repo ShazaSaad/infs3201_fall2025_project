@@ -114,8 +114,20 @@ app.get('/photos/:id', async (req, res) => {
   if (!photo) {
     res.status(404).render('error', { message: 'Photo not found.', layout: false })
   } else {
-    res.render('photos', { photo, layout: false })
+    const comments = await business.getComments(photoId)
+    res.render('photos', { photo, comments, layout: false })
   }
+})
+
+app.post('/photos/:id/comment', async (req, res) => {
+  const photoId = req.params.id
+  const { username, content } = req.body
+  if (!username || !content) {
+    res.redirect(`/photos/${photoId}?message=Username and content are required`)
+    return
+  }
+  await business.addComment(photoId, username, content)
+  res.redirect(`/photos/${photoId}`)
 })
 
 /**
