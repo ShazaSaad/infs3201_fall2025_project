@@ -115,12 +115,28 @@ async function register(userInfo) {
     }
 }
 
+async function saveComment(comment) {
+    await connectDatabase()
+    const db = client.db('infs3201_fall2025')
+    const commentsCollection = db.collection('comments')
+    await commentsCollection.insertOne(comment)
+}
+
+async function loadComments(photoId) {
+    await connectDatabase()
+    const db = client.db('infs3201_fall2025')
+    const commentsCollection = db.collection('comments')
+    const comments = await commentsCollection.find({ photoId: photoId }).toArray()
+    return comments
+}
 
 module.exports = {
     loadPhotos,
     savePhotos,
     loadAlbums,
     validateUser,
-    register
+    register,
+    saveComment,
+    loadComments
 }
 
