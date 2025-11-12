@@ -23,7 +23,9 @@
     <ul>
         {{#each comments}}
         <li>
-            <strong>{{userID}}</strong> ({{date}}): {{text}}
+            <strong>User {{userID}}</strong>
+            <em style="color:gray;">({{date}})</em><br>
+            {{text}}
         </li>
         {{/each}}
     </ul>

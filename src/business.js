@@ -118,8 +118,8 @@ async function addComment(photoId, userID, text) {
   const comment = {
     photoId: photoId,
     userID: userID,
-    text: text,
-    timestamp: new Date()
+    text: text.trim(),
+    timestamp: new Date().toISOString()
   }
   await persistence.saveComment(comment)
   return { success: true }

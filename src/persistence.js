@@ -1,5 +1,6 @@
 const { MongoClient } = require('mongodb')
 const fs = require('fs')
+const { timeStamp } = require('console')
 
 let client = undefined
 
@@ -119,6 +120,7 @@ async function saveComment(comment) {
     await connectDatabase()
     const db = client.db('infs3201_fall2025')
     const commentsCollection = db.collection('comments')
+    comment.timestamp = new Date()
     await commentsCollection.insertOne(comment)
 }
 
@@ -126,7 +128,7 @@ async function loadComments(photoId) {
     await connectDatabase()
     const db = client.db('infs3201_fall2025')
     const commentsCollection = db.collection('comments')
-    const comments = await commentsCollection.find({ photoId: photoId }).toArray()
+    const comments = await commentsCollection.find({ photoId: photoId }).sort({timeStamp: -1}).toArray()
     return comments
 }
 
