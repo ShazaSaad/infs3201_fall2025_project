@@ -40,7 +40,7 @@ async function updatePhotoDetails(photoId, newTitle, newDescription, newVisibili
   * @param {string} albumName - The name of the album.
   * @return {Promise<Object>} An object containing either the list of photos or an error message.
   */
-async function albumPhotoList(albumName, ownerID) {
+async function albumPhotoListByowner(albumName, ownerID) {
   const albums = await persistence.loadAlbums()
   const photos = await persistence.loadPhotos()
 
@@ -163,7 +163,7 @@ async function getComments(photoId) {
 module.exports = {
   listAlbums,
   updatePhotoDetails,
-  albumPhotoList,
+  albumPhotoListByowner,
   getPhotoDetails,
   validateUser,
   register,
