@@ -176,7 +176,7 @@ async function register(userInfo) {
         const plainPassword = userInfo.password
         const hashedPassword = crypto.createHash('sha256').update(salt + plainPassword).digest('hex')
 
-        // Store only the hash and salt, not the plaintext password
+        // Storing the hashed password and salt
         userInfo.hashedPassword = hashedPassword
         userInfo.salt = salt
         delete userInfo.password
