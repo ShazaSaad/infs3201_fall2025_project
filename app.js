@@ -116,11 +116,16 @@ app.get('/albums/:name', async (req, res) => {
 app.get('/photos/:id', async (req, res) => {
   const photoId = req.params.id
   const photo = await business.getPhotoDetails(photoId)
+  const sessionId = req.cookies.sessionKey
+  const sessionData = await business.getSessionData(sessionId)
   if (!photo) {
     res.status(404).render('error', { message: 'Photo not found.', layout: false })
   } else {
     const comments = await business.getComments(photoId)
-    res.render('photos', { photo, comments, layout: false })
+    const username = sessionData ?  sessionData.username : undefined
+    const isOwner = sessionData.userId && Number(sessionData.userId)=== Number(photo.owner)
+    console.log(isOwner)
+    res.render('photos', {isOwner, photo, comments,username, layout: false })
   }
 })
 
