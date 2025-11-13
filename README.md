@@ -49,8 +49,9 @@ This project follows a **layered architecture** consisting of:
 INFS3201_FALL2025_PROJECT/
  ├─ public/
  │   ├─ photos/
- │   ├─ css/
- │   │  
+ |   |   └── (all photos used for this application)
+ │   └── css/
+ │       └── styles.css
  ├─ src/
  |   ├── business.js
  |   ├── presentation.js
@@ -111,6 +112,14 @@ mongodb+srv://60301815:60301815@60301815.kxwbpk3.mongodb.net/
    * Open your browser and go to:
      👉 `http://localhost:8000`
 
+5. **Test Application**
+
+   You can use the following users to test the application:
+
+   - **Username:** `jahan` | **Password:** `111`  
+   - **Username:** `shaza` | **Password:** `222`  
+   - **Username:** `sara` | **Password:** `333`
+
 ---
 
 ## Base Code Reference
@@ -128,6 +137,5 @@ All new Phase 1 functionality builds upon that foundation.
 
 * Album galleries with thumbnail grids
 * Email notification system for photo comments
-* Enhanced UI styling and hover effects
 * Photo uploads and tagging system
 * Search functionality (by title, tag, description)
