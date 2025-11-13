@@ -126,22 +126,19 @@ app.get('/photos/:id', async (req, res) => {
 
 app.post('/photos/:id/comment', async (req, res) => {
   const photoId = req.params.id
-  const text = req.body.text
-
-  // Retrieve the logged-in user's ID from your session or ownerId
+  const text = req.body.text.trim()
   const sessionKey = req.cookies.sessionKey
-  let username = null
-  if (sessionKey) {
-    const sessionData = await business.getSessionData(sessionKey)
-    if (sessionData && sessionData.username) {
-      username = sessionData.username
-    }
-  }
+
+  // getSessionData() now directly returns the data object
+  const sessionData = await business.getSessionData(sessionKey)
+  const username = sessionData ? sessionData.username : null
+
   if (!username) {
     res.redirect(`/photos/${photoId}?message=You must be logged in to comment`)
     return
   }
-  if (!text || text.trim() === '') {
+
+  if (!text) {
     res.redirect(`/photos/${photoId}?message=Comment cannot be empty`)
     return
   }
@@ -180,11 +177,11 @@ app.get('/logout', async (req, res) => {
   if (sessId) {
     // Deleting the session from the database and removing the cookie
     await business.deleteSession(sessId)
-    res.clearCookie('sessionid')      
+    res.clearCookie('sessionKey')
   }
 
   // Redirecting the user to the login page
-  res.redirect('/')  
+  res.redirect('/')
 })
 
 // Start the server
