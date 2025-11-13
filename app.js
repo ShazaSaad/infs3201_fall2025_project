@@ -93,7 +93,7 @@ app.get('/main', async (req, res) => {
 app.get('/albums/:name', async (req, res) => {
   try {
     const albumName = req.params.name
-    const result = await business.albumPhotoList(albumName, ownerId)
+    const result = await business.albumPhotoListByowner(albumName, ownerId)
 
     if (result.error) {
       res.status(404).render('error', { message: result.error, layout: false })
