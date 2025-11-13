@@ -17,7 +17,19 @@
     <p>Description:{{photo.description}}</p>
     <p>Visibility:{{photo.visibitlity}}</p>
 
-    <img src="/photos/{{photo.filename}}" onerror="this.src=this.src.replace('.jpg','.jpeg')" alt="{{photo.title}}" />
+    <img src="/photos/{{photo.filename}}" alt="{{photo.title}}" onerror="
+    const exts = ['.jpg', '.jpeg', '.png']
+    const current = this.src
+    const nextExt = exts.find(ext => !current.endsWith(ext) && current.includes('/photos/'))
+    if (nextExt) {
+      const base = current.replace(/\.(jpg|jpeg|png)$/i, '')
+      this.onerror = null
+      this.src = base + nextExt
+    } else {
+      this.src = '/photos/default.jpg'
+    }
+  " />
+
 
     <hr>
     <h3>Comments</h3>
