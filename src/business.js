@@ -113,20 +113,17 @@ async function startSession(data) {
 }
 
 async function getSessionData(key) {
-  if (!key) {
-    return undefined
-  }
+  if (!key) return undefined
   const session = await persistence.getSessionData(key)
-  if (!session) {
-    return undefined
-  }
+  if (!session) return undefined
+
   const expiryDate = new Date(session.expiry)
   if (Date.now() > expiryDate.getTime()) {
-    return session.data
-  } else {
     await persistence.deleteSession(key)
     return undefined
   }
+
+  return session.data 
 }
 
 async function deleteSession(key) {
