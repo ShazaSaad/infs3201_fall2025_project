@@ -18,11 +18,12 @@ async function listAlbums() {
  * @param {string} visibility - to set visibility to public or private
  * @return {Promise<Object>} An object indicating success or error.
  */
-async function updatePhotoDetails(photoId, newTitle, newDescription, newVisibility) {
+async function updatePhotoDetails(photoId, newTitle, newDescription, newVisibility, sessionKey) {
   const photos = await persistence.loadPhotos()
-
+  let sessionData = await getSessionData(sessionKey)
+  let userId= sessionData.userId
   for (let i = 0; i < photos.length; i++) {
-    if (photos[i]._id == photoId) {
+    if (photos[i]._id == photoId ) {
       if (newTitle) photos[i].title = newTitle
       if (newDescription) photos[i].description = newDescription
       if (newVisibility.trim().toLowerCase() === 'public' || newVisibility.trim().toLowerCase() === 'private') photos[i].visibitlity = newVisibility.trim().toLowerCase()
@@ -61,7 +62,7 @@ async function albumPhotoListByowner(albumName, ownerID) {
     let photo = photos[i]
     for (let j = 0; j < photo.albums.length; j++) {
       if (photo.albums[j] == album._id || photo.albums[j] == album.id) {
-        if (photo.visibility == "public" || Number(photo.owner) === Number(ownerID)) {
+        if (photo.visibitlity == "public" || Number(photo.owner) === Number(ownerID)) {
           foundPhotos.push(photo)
           break
         }
