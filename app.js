@@ -170,5 +170,22 @@ app.post('/photos/:id/edit', async (req, res) => {
   res.redirect(`/photos/${photoId}`)
 })
 
+/**
+ * Deletes the session and redirects the user to login page.  
+ * GET /logout
+ */
+app.get('/logout', async (req, res) => {
+  const sessId = req.cookies.sessionKey
+
+  if (sessId) {
+    // Deleting the session from the database and removing the cookie
+    await business.deleteSession(sessId)
+    res.clearCookie('sessionid')      
+  }
+
+  // Redirecting the user to the login page
+  res.redirect('/')  
+})
+
 // Start the server
 app.listen(8000, () => console.log('Server running'))
