@@ -37,6 +37,11 @@ app.get('/', async (req, res) => {
 })
 let ownerId = 0
 
+/**
+ * Handles log in requests of users
+ * redirects existed users to /main page
+ * else redirect them to same page with and error
+ */
 app.post('/', async (req, res) => {
   let username = req.body.username
   let password = req.body.password
@@ -52,11 +57,19 @@ app.post('/', async (req, res) => {
   res.redirect('/?message=Invalid Credentials')
 })
 
+/**
+ * Renders the registration page to admit new users
+ */
 app.get('/register', async (req, res) => {
   let message = req.query.message
   res.render('registration', { layout: undefined, message: message })
 })
 
+/**
+ * Handles the new registered user entries(username, email, password, confirmed password)
+ * regitering new user to users collection if all entries correct
+ * error message if entries not valid
+ */
 app.post('/register', async (req, res) => {
   let email = req.body.email
   let username = req.body.username
@@ -128,7 +141,11 @@ app.get('/photos/:id', async (req, res) => {
     res.render('photos', {isOwner, photo, comments,username, layout: false })
   }
 })
-
+/**
+ * Handles new comments validations
+ * adding comments and redirect to Photo details page
+ * redirect to error 
+ */
 app.post('/photos/:id/comment', async (req, res) => {
   const photoId = req.params.id
   const text = req.body.text.trim()
@@ -164,7 +181,11 @@ app.get('/photos/:id/edit', async (req, res) => {
   const photo = await business.getPhotoDetails(photoId)
   res.render('editphoto', { photo, layout: false })
 })
-
+/**
+ * Handles editing photos entries validation (title ,visibility, description)
+ * edit photo using updated function to updated photo data
+ * redirect to photo details page with updated fields.
+ */
 app.post('/photos/:id/edit', async (req, res) => {
   const photoId = req.params.id
   const sessionKey = req.cookies.sessionKey

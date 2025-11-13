@@ -20,6 +20,7 @@ async function connectDatabase() {
     }
 }
 
+
 /**
  * Loads all photos from the 'photos' collection in the database.
  * @return {Promise<Array>} An array of photo objects.
@@ -172,6 +173,7 @@ module.exports = {
     saveSession,
     saveComment,
     loadComments,
-    deleteSession
+    deleteSession,
+
 }
 
