@@ -1,6 +1,7 @@
 const { MongoClient } = require('mongodb')
 const fs = require('fs')
 const { timeStamp } = require('console')
+const crypto = require('crypto')
 
 let client = undefined
 
@@ -127,8 +128,19 @@ async function validateUser(username, password) {
         await connectDatabase()
         const db = client.db('infs3201_fall2025')
         const usersCollection = db.collection('users')
-        const user = await usersCollection.findOne({ username, password })
-        return user ? {status:true,userId: user.userID} : false
+
+        // Finding user by username 
+        const user = await usersCollection.findOne({ username })
+        if (!user) return false
+
+        // Finding user by the hashed password
+        const salt = user.salt
+        const hashedPassword = crypto.createHash('sha256').update(salt + password).digest('hex')
+
+        if (hashedPassword === user.hashedPassword) {
+            return { status: true, userId: user.userID }
+        }
+        return false
     } catch (err) {
         console.error('Error during login check', err)
         return false
@@ -160,9 +172,20 @@ async function register(userInfo) {
 
         userInfo.userID = userID
 
+        const salt = crypto.randomBytes(2).toString('hex')
+        const plainPassword = userInfo.password
+        const hashedPassword = crypto.createHash('sha256').update(salt + plainPassword).digest('hex')
+
+        // Store only the hash and salt, not the plaintext password
+        userInfo.hashedPassword = hashedPassword
+        userInfo.salt = salt
+        delete userInfo.password
+        delete userInfo.confPassword
+
         // Inserting the new user into the database
         const result = await usersCollection.insertOne(userInfo)
         return { success: true, userId: result.insertedId }
+
     } catch (err) {
         console.error('Error during registration', err)
         return { error: 'Registration failed' }
@@ -189,7 +212,7 @@ async function loadComments(photoId) {
     await connectDatabase()
     const db = client.db('infs3201_fall2025')
     const commentsCollection = db.collection('comments')
-    const comments = await commentsCollection.find({ photoId: photoId }).sort({timestamp: -1}).toArray()
+    const comments = await commentsCollection.find({ photoId: photoId }).sort({ timestamp: -1 }).toArray()
     return comments
 }
 
