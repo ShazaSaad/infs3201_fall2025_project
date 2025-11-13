@@ -22,10 +22,10 @@ async function updatePhotoDetails(photoId, newTitle, newDescription, newVisibili
   const photos = await persistence.loadPhotos()
 
   for (let i = 0; i < photos.length; i++) {
-    if (photos[i]._id == photoId || photos[i].id == photoId) {
+    if (photos[i]._id == photoId) {
       if (newTitle) photos[i].title = newTitle
       if (newDescription) photos[i].description = newDescription
-      if (newVisibility.trim().toLowerCase() === 'public' || newVisibility.trim().toLowerCase() === 'private') photos[i].visibitlity = newVisibility.trim().toLowerCase()
+      if (newVisibility.trim().toLowerCase() === 'public' || newVisibility.trim().toLowerCase() === 'private') photo[i].visibility = newVisibility.trim().toLowerCase()
 
       await persistence.savePhotos(photos)
       return { success: true, data: photos[i] }
@@ -40,6 +40,7 @@ async function updatePhotoDetails(photoId, newTitle, newDescription, newVisibili
   * @param {string} albumName - The name of the album.
   * @return {Promise<Object>} An object containing either the list of photos or an error message.
   */
+ 
 async function albumPhotoListByowner(albumName, ownerID) {
   const albums = await persistence.loadAlbums()
   const photos = await persistence.loadPhotos()
@@ -58,7 +59,7 @@ async function albumPhotoListByowner(albumName, ownerID) {
 
   let foundPhotos = []
   for (let i = 0; i < photos.length; i++) {
-    const photo = photos[i]
+    let photo = photos[i]
     for (let j = 0; j < photo.albums.length; j++) {
       if (photo.albums[j] == album._id || photo.albums[j] == album.id) {
         if (photo.visibility == "public" || Number(photo.owner) === Number(ownerID)) {
@@ -113,17 +114,20 @@ async function startSession(data) {
 }
 
 async function getSessionData(key) {
-  if (!key) return undefined
+  if (!key) {
+    return undefined
+  }
   const session = await persistence.getSessionData(key)
-  if (!session) return undefined
-
+  if (!session) {
+    return undefined
+  }
   const expiryDate = new Date(session.expiry)
   if (Date.now() > expiryDate.getTime()) {
+    return session.data
+  } else {
     await persistence.deleteSession(key)
     return undefined
   }
-
-  return session.data 
 }
 
 async function deleteSession(key) {
