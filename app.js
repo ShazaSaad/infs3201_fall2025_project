@@ -137,7 +137,6 @@ app.get('/photos/:id', async (req, res) => {
     const comments = await business.getComments(photoId)
     const username = sessionData ?  sessionData.username : undefined
     const isOwner = sessionData.userId && Number(sessionData.userId)=== Number(photo.owner)
-    console.log(isOwner)
     res.render('photos', {isOwner, photo, comments,username, layout: false })
   }
 })
