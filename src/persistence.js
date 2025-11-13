@@ -73,6 +73,36 @@ async function loadAlbums() {
     return albums
 }
 
+async function saveSession(sessionKey, expiry, data) {
+    await connectDatabase()
+    const db = client.db('infs3201_fall2025')
+    const sessionsCollection = db.collection('sessions')
+    await sessionsCollection.insertOne({
+        sessionKey: sessionKey,
+        expiry: expiry,
+        data: data
+    })
+}
+
+async function getSessionData(key) {
+    await connectDatabase()
+    const db = client.db('infs3201_fall2025')
+    const sessionsCollection = db.collection('sessions')
+    const session = await sessionsCollection.findOne({ sessionKey: key })
+    if (session) {
+        return session
+    } else {
+        return null
+    }
+}
+
+async function deleteSession(key) {
+    await connectDatabase()
+    const db = client.db('infs3201_fall2025')
+    const sessionsCollection = db.collection('sessions')
+    await sessionsCollection.deleteOne({ sessionKey: key })
+}
+
 async function validateUser(username, password) {
     try {
         await connectDatabase()
@@ -138,6 +168,8 @@ module.exports = {
     loadAlbums,
     validateUser,
     register,
+    getSessionData,
+    saveSession,
     saveComment,
     loadComments
 }

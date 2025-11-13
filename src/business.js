@@ -1,5 +1,5 @@
 const persistence = require('./persistence')
-
+const crypto = require('crypto')
 /**
  * Retrieves a list of all albums.
  * @return {Promise<Array>} An array of album objects.
@@ -25,7 +25,7 @@ async function updatePhotoDetails(photoId, newTitle, newDescription, newVisibili
     if (photos[i]._id == photoId || photos[i].id == photoId) {
       if (newTitle) photos[i].title = newTitle
       if (newDescription) photos[i].description = newDescription
-      if(newVisibility.trim().toLowerCase()==='public' || newVisibility.trim().toLowerCase()==='private') photo[i].visibility =newVisibility.trim().toLowerCase()
+      if (newVisibility.trim().toLowerCase() === 'public' || newVisibility.trim().toLowerCase() === 'private') photo[i].visibility = newVisibility.trim().toLowerCase()
 
       await persistence.savePhotos(photos)
       return { success: true, data: photos[i] }
@@ -61,11 +61,11 @@ async function albumPhotoList(albumName, ownerID) {
     const photo = photos[i]
     for (let j = 0; j < photo.albums.length; j++) {
       if (photo.albums[j] == album._id || photo.albums[j] == album.id) {
-        if(photo.visibility == "public" || Number(photo.owner) ===Number(ownerID)){
+        if (photo.visibility == "public" || Number(photo.owner) === Number(ownerID)) {
           foundPhotos.push(photo)
           break
         }
-        
+
       }
     }
   }
@@ -93,22 +93,48 @@ async function getPhotoDetails(photoId) {
 }
 
 async function validateUser(username, password) {
-    return await persistence.validateUser(username, password)
+  return await persistence.validateUser(username, password)
 }
 
 async function register(email, username, password) {
-    let userInfo = {
-        username: username,
-        password: password, 
-        email: email
-    }
-    return await persistence.register(userInfo)
+  let userInfo = {
+    username: username,
+    password: password,
+    email: email
+  }
+  return await persistence.register(userInfo)
 }
 
+async function startSession(data) {
+  let uuid = crypto.randomUUID()
+  let expiry = new Date(Date.now() + 5 * 60 * 1000)
+  await persistence.saveSession(uuid, expiry.toISOString(), data)
+  return uuid
+}
 
+async function getSessionData(key) {
+  if (!key) {
+    return undefined
+  }
+  const session = await persistence.getSessionData(key)
+  if (!session) {
+    return undefined
+  }
+  const expiryDate = new Date(session.expiry)
+  if (Date.now() > expiryDate.getTime()) {
+    return session.data
+  } else {
+    await persistence.deleteSession(key)
+    return undefined
+  }
+}
+
+async function deleteSession(key) {
+  await persistence.deleteSession(key)
+}
 
 async function addComment(photoId, userID, text) {
-  if(!text || !text.trim() ) {
+  if (!text || !text.trim()) {
     return { error: 'Comment text cannot be empty.' }
   }
   const comment = {
@@ -129,10 +155,12 @@ module.exports = {
   listAlbums,
   updatePhotoDetails,
   albumPhotoList,
-  getPhotoDetails, 
+  getPhotoDetails,
   validateUser,
   register,
   addComment,
-  getComments
-  
+  getComments,
+  startSession,
+  getSessionData,
+  deleteSession
 }

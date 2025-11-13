@@ -1,5 +1,6 @@
 const express = require('express')
 const bodyParser = require('body-parser')
+const cookieParser = require('cookie-parser')
 const { engine } = require('express-handlebars')
 const path = require('path')
 const business = require('./src/business')
@@ -43,6 +44,8 @@ app.post('/', async (req, res) => {
   let valid = await business.validateUser(username, password)
   ownerId= valid.userId
   if (valid.status) {
+    let sessionKey = await business.startSession({username: username, userId: valid.userId})
+    res.cookie('sessionKey', sessionKey, { httpOnly: true })
     res.redirect('/main')
     return
   }
