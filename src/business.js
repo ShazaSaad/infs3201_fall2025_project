@@ -16,6 +16,7 @@ async function listAlbums() {
  * @param {string} newTitle - The new title for the photo.
  * @param {string} newDescription - The new description for the photo.
  * @param {string} visibility - to set visibility to public or private
+ * @param {Number} sessionKey - to enable photo owner only to make changes
  * @return {Promise<Object>} An object indicating success or error.
  */
 async function updatePhotoDetails(photoId, newTitle, newDescription, newVisibility, sessionKey) {
@@ -38,6 +39,7 @@ async function updatePhotoDetails(photoId, newTitle, newDescription, newVisibili
 /**
   * Retrieves a list of photos in a specified album.
   * @param {string} albumName - The name of the album.
+  * @param {Number } ownerID - to enable access for eligibile users to private photo+ public ones
   * @return {Promise<Object>} An object containing either the list of photos or an error message.
   */
  
@@ -92,11 +94,23 @@ async function getPhotoDetails(photoId) {
   }
   return null
 }
-
+/**
+ * to validate users according to their username and password to access photos
+ * @param {String} username - for validation
+ * @param {String} password - for validation
+ * @returns {Promise<Object> || false} function validateUser() that returns {status: true, userID: user.userId} || false
+ */
 async function validateUser(username, password) {
   return await persistence.validateUser(username, password)
 }
 
+/**
+ * to add new user to users using params bellow
+ * @param {String} email 
+ * @param {String} username 
+ * @param {String} password 
+ * @returns {Object} error object or successfull registeration object
+ */
 async function register(email, username, password) {
   let userInfo = {
     username: username,
@@ -106,6 +120,12 @@ async function register(email, username, password) {
   return await persistence.register(userInfo)
 }
 
+
+/**
+ * to start user session using Object that defines user 
+ * @param {Object} data - contains username and userId
+ * @returns {String} sessionId 
+ */
 async function startSession(data) {
   let uuid = crypto.randomUUID()
   let expiry = new Date(Date.now() + 5 * 60 * 1000)
@@ -113,6 +133,11 @@ async function startSession(data) {
   return uuid
 }
 
+/**
+ * to fetch session data from session using session Id
+ * @param {String} key -session id
+ * @returns {Object} -Session Data object that contains username and userID
+ */
 async function getSessionData(key) {
   if (!key) return undefined
 
@@ -129,11 +154,20 @@ async function getSessionData(key) {
   return session.data
 }
 
-
+/**
+ * Deletes session Object from sessions collection 
+ * @param {String} key session Id for specific session
+ */
 async function deleteSession(key) {
   await persistence.deleteSession(key)
 }
-
+/**
+ * Add users comments to comments collections using beloow params
+ * @param {Number} photoId - to identify photo commented to
+ * @param {String} username -to identify which user commenting
+ * @param {String} text - comment text to be passed to photos and comments collections
+ * @returns {Object} - error object identifies error adding comment|| success comment addition object
+ */
 async function addComment(photoId, username, text) {
   if (!text || !text.trim()) {
     return { error: 'Comment text cannot be empty.' }
@@ -148,6 +182,11 @@ async function addComment(photoId, username, text) {
   return { success: true }
 }
 
+/**
+ * To get comment in a formated fromat with timestamps
+ * @param {Number} photoId -
+ * @returns {object} formattedComments - text with the time 
+ */
 async function getComments(photoId) {
   const comments = await persistence.loadComments(photoId)
   let formattedComments = []
