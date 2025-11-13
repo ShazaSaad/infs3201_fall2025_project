@@ -13,7 +13,7 @@
     <p><a href="/photos/{{photo._id}}/edit">edit</a></p>
     <p>Title: {{photo.title}}</p>
     <p>Description:{{photo.description}}</p>
-    <p>Visibility:{{photo.visibility}}</p>
+    <p>Visibility:{{photo.visibitlity}}</p>
 
     <img src="/photos/{{photo.filename}}" onerror="this.src=this.src.replace('.jpg','.jpeg')" alt="{{photo.title}}" />
 
@@ -34,7 +34,7 @@
     {{/if}}
 
     <hr>
-    <form action="/photos/{{photo._id}}/comment" method="POST">
+    <form action="/photos/{{#if photo._id}}{{photo._id}}{{else}}{{photo.id}}{{/if}}/comment" method="POST">
         <label for="text">Comment:</label><br>
         <textarea id="text" name="text" rows="3" cols="40" required></textarea><br><br>
         <button type="submit">Submit Comment</button>

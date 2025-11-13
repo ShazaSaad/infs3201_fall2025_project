@@ -126,30 +126,26 @@ app.get('/photos/:id', async (req, res) => {
 
 app.post('/photos/:id/comment', async (req, res) => {
   const photoId = req.params.id
-  const text = req.body.text  
+  const text = req.body.text
 
   // Retrieve the logged-in user's ID from your session or ownerId
   const sessionKey = req.cookies.sessionKey
   let username = null
   if (sessionKey) {
     const sessionData = await business.getSessionData(sessionKey)
-    if (sessionData && sessionData.data && sessionData.data.username) {
+    if (sessionData && sessionData.username) {
       username = sessionData.username
     }
-  }
-  if (!username || !text) {
-    res.redirect(`/photos/${photoId}?message=You must be logged in to comment`)
-    return
   }
   if (!username) {
     res.redirect(`/photos/${photoId}?message=You must be logged in to comment`)
     return
   }
-
   if (!text || text.trim() === '') {
     res.redirect(`/photos/${photoId}?message=Comment cannot be empty`)
     return
   }
+
   await business.addComment(photoId, username, text)
   res.redirect(`/photos/${photoId}`)
 })
