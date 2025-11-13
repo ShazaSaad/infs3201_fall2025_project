@@ -158,15 +158,17 @@ app.post('/photos/:id/comment', async (req, res) => {
  */
 app.get('/photos/:id/edit', async (req, res) => {
   const photoId = req.params.id
+
   const photo = await business.getPhotoDetails(photoId)
   res.render('editphoto', { photo, layout: false })
 })
 
 app.post('/photos/:id/edit', async (req, res) => {
   const photoId = req.params.id
+  const sessionKey = req.cookies.sessionKey
   const { title, description } = req.body
   const phototype = req.body.visibility
-  await business.updatePhotoDetails(photoId, title, description, phototype)
+  await business.updatePhotoDetails(photoId, title, description, phototype,sessionKey)
   res.redirect(`/photos/${photoId}`)
 })
 
