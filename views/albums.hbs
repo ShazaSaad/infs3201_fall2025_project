@@ -9,10 +9,6 @@
 </head>
 
 <body>
-    <nav>
-        <a href="/logout" class="logout-btn">Logout</a>
-    </nav>
-
     <h1>Photos in {{album.name}} ({{photos.length}} photos)</h1>
 
     {{#if photos.length}}
@@ -28,6 +24,10 @@
     {{/if}}
 
     <p><a href="/main">← Back to Albums</a></p>
+    
+    <nav>
+        <a href="/logout" class="logout-btn">Logout</a>
+    </nav>
 </body>
 
 </html>
