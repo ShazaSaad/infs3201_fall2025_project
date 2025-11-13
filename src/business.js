@@ -23,7 +23,7 @@ async function updatePhotoDetails(photoId, newTitle, newDescription, newVisibili
   let sessionData = await getSessionData(sessionKey)
   let userId= sessionData.userId
   for (let i = 0; i < photos.length; i++) {
-    if (photos[i]._id == photoId ) {
+    if (photos[i]._id == photoId && (sessionData && photos[i].owner === userId)) {
       if (newTitle) photos[i].title = newTitle
       if (newDescription) photos[i].description = newDescription
       if (newVisibility.trim().toLowerCase() === 'public' || newVisibility.trim().toLowerCase() === 'private') photos[i].visibitlity = newVisibility.trim().toLowerCase()
