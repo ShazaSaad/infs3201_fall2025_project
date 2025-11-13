@@ -8,7 +8,7 @@ const business = require('./src/business')
 
 // Create Express app
 const app = express()
-
+app.use(cookieParser())
 // Middleware to parse request bodies
 app.use(bodyParser.urlencoded({ extended: true }))
 
@@ -35,16 +35,16 @@ app.get('/', async (req, res) => {
     message: message
   })
 })
-let ownerId =0
+let ownerId = 0
 
 app.post('/', async (req, res) => {
   let username = req.body.username
   let password = req.body.password
   // validateUser if true returns object {status: true ,userId: user.userID}
   let valid = await business.validateUser(username, password)
-  ownerId= valid.userId
+  ownerId = valid.userId
   if (valid.status) {
-    let sessionKey = await business.startSession({username: username, userId: valid.userId})
+    let sessionKey = await business.startSession({ username: username, userId: valid.userId })
     res.cookie('sessionKey', sessionKey, { httpOnly: true })
     res.redirect('/main')
     return
@@ -126,14 +126,34 @@ app.get('/photos/:id', async (req, res) => {
 
 app.post('/photos/:id/comment', async (req, res) => {
   const photoId = req.params.id
-  const { userID, content } = req.body
-  if (!userID || !content) {
-    res.redirect(`/photos/${photoId}?message=Username and content are required`)
+  const text = req.body.text  
+
+  // Retrieve the logged-in user's ID from your session or ownerId
+  const sessionKey = req.cookies.sessionKey
+  let username = null
+  if (sessionKey) {
+    const sessionData = await business.getSessionData(sessionKey)
+    if (sessionData && sessionData.data && sessionData.data.username) {
+      username = sessionData.username
+    }
+  }
+  if (!username || !text) {
+    res.redirect(`/photos/${photoId}?message=You must be logged in to comment`)
     return
   }
-  await business.addComment(photoId, userID, content)
+  if (!username) {
+    res.redirect(`/photos/${photoId}?message=You must be logged in to comment`)
+    return
+  }
+
+  if (!text || text.trim() === '') {
+    res.redirect(`/photos/${photoId}?message=Comment cannot be empty`)
+    return
+  }
+  await business.addComment(photoId, username, text)
   res.redirect(`/photos/${photoId}`)
 })
+
 
 /**
  * Renders the edit page for a specific photo.  

@@ -133,13 +133,13 @@ async function deleteSession(key) {
   await persistence.deleteSession(key)
 }
 
-async function addComment(photoId, userID, text) {
+async function addComment(photoId, username, text) {
   if (!text || !text.trim()) {
     return { error: 'Comment text cannot be empty.' }
   }
   const comment = {
     photoId: photoId,
-    userID: userID,
+    username: username,
     text: text.trim(),
     timestamp: new Date().toISOString()
   }
@@ -149,8 +149,17 @@ async function addComment(photoId, userID, text) {
 
 async function getComments(photoId) {
   const comments = await persistence.loadComments(photoId)
-  return comments
+  let formattedComments = []
+
+  for (let i = 0; i < comments.length; i++) {
+    let comment = comments[i]
+    comment.timestamp = new Date(comment.timestamp).toLocaleString()
+    formattedComments.push(comment)
+  }
+
+  return formattedComments
 }
+
 module.exports = {
   listAlbums,
   updatePhotoDetails,

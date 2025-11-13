@@ -158,7 +158,7 @@ async function loadComments(photoId) {
     await connectDatabase()
     const db = client.db('infs3201_fall2025')
     const commentsCollection = db.collection('comments')
-    const comments = await commentsCollection.find({ photoId: photoId }).sort({timeStamp: -1}).toArray()
+    const comments = await commentsCollection.find({ photoId: photoId }).sort({timestamp: -1}).toArray()
     return comments
 }
 
@@ -171,6 +171,7 @@ module.exports = {
     getSessionData,
     saveSession,
     saveComment,
-    loadComments
+    loadComments,
+    deleteSession
 }
 
