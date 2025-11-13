@@ -10,7 +10,9 @@
 
 <body>
     <h1>Photo Details</h1>
+    {{#if isOwner}}
     <p><a href="/photos/{{photo._id}}/edit">edit</a></p>
+    {{/if}}
     <p>Title: {{photo.title}}</p>
     <p>Description:{{photo.description}}</p>
     <p>Visibility:{{photo.visibitlity}}</p>
