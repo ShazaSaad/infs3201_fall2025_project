@@ -73,7 +73,12 @@ async function loadAlbums() {
     const albums = await albumsCollection.find({}).toArray()
     return albums
 }
-
+/**
+ * add session object to session collection
+ * @param {String} sessionKey session ID
+ * @param {Date} expiry - expiry date of user's current generated session
+ * @param {Object} data - object contains info {username , userId}
+ */
 async function saveSession(sessionKey, expiry, data) {
     await connectDatabase()
     const db = client.db('infs3201_fall2025')
@@ -84,7 +89,11 @@ async function saveSession(sessionKey, expiry, data) {
         data: data
     })
 }
-
+/**
+ * find session data in sessions collection using sessionId if exists
+ * @param {String} key - session identifier
+ * @returns {Object || null} session Objects if exists || null > session object doesn't exists
+ */
 async function getSessionData(key) {
     await connectDatabase()
     const db = client.db('infs3201_fall2025')
@@ -96,7 +105,10 @@ async function getSessionData(key) {
         return null
     }
 }
-
+/**
+ * Deletes session Object using session id
+ * @param {String} key 
+ */
 async function deleteSession(key) {
     await connectDatabase()
     const db = client.db('infs3201_fall2025')
@@ -104,6 +116,12 @@ async function deleteSession(key) {
     await sessionsCollection.deleteOne({ sessionKey: key })
 }
 
+/**
+ * checks if username and password matches records in users collection
+ * @param {String} username 
+ * @param {String} password 
+ * @returns {Object || false} valid user gets true status and  userId.else not valid>> false
+ */
 async function validateUser(username, password) {
     try {
         await connectDatabase()
@@ -116,7 +134,11 @@ async function validateUser(username, password) {
         return false
     }
 }
-
+/**
+ * adds new user to users collection using userInfo Object
+ * @param {Object} userInfo contains (username , password, confirmed password, email)
+ * @returns {Object} - returna error object if something went wrong|| success registration entries return object with true status and userId generated.
+ */
 async function register(userInfo) {
     try {
         await connectDatabase()
@@ -147,6 +169,10 @@ async function register(userInfo) {
     }
 }
 
+/**
+ * add comment object to comments collection
+ * @param {Object} comment - Object contains (photoId of photo, username of commenter,text comment, time of the comment )
+ */
 async function saveComment(comment) {
     await connectDatabase()
     const db = client.db('infs3201_fall2025')
@@ -154,7 +180,11 @@ async function saveComment(comment) {
     comment.timestamp = new Date()
     await commentsCollection.insertOne(comment)
 }
-
+/**
+ * getting list of all comment objects of a specific photo using photo Id
+ * @param {String} photoId 
+ * @returns {Array<object>} - all comments of photo  
+ */
 async function loadComments(photoId) {
     await connectDatabase()
     const db = client.db('infs3201_fall2025')
