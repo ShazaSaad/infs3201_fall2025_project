@@ -25,8 +25,7 @@ async function updatePhotoDetails(photoId, newTitle, newDescription, newVisibili
     if (photos[i]._id == photoId) {
       if (newTitle) photos[i].title = newTitle
       if (newDescription) photos[i].description = newDescription
-      if (newVisibility.trim().toLowerCase() === 'public' || newVisibility.trim().toLowerCase() === 'private') photo[i].visibility = newVisibility.trim().toLowerCase()
-
+      if (newVisibility.trim().toLowerCase() === 'public' || newVisibility.trim().toLowerCase() === 'private') photos[i].visibitlity = newVisibility.trim().toLowerCase()
       await persistence.savePhotos(photos)
       return { success: true, data: photos[i] }
     }
