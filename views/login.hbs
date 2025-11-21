@@ -7,10 +7,14 @@
     <title>Login</title>
 </head>
 <body>
+    <header class="site-header">
+        <h1>Media Manager</h1>
+    </header>
+
     {{#if message}}
         <div style="color: red;">{{message}}</div>
     {{/if}}
-    <h1>Login</h1>
+    <h2>Login</h2>
     <form method="post">
         Username: <input name="username"><br>
         Password: <input name="password" type="password"><br>

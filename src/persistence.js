@@ -21,7 +21,6 @@ async function connectDatabase() {
     }
 }
 
-
 /**
  * Loads all photos from the 'photos' collection in the database.
  * @return {Promise<Array>} An array of photo objects.
@@ -74,6 +73,7 @@ async function loadAlbums() {
     const albums = await albumsCollection.find({}).toArray()
     return albums
 }
+
 /**
  * add session object to session collection
  * @param {String} sessionKey session ID
@@ -90,6 +90,7 @@ async function saveSession(sessionKey, expiry, data) {
         data: data
     })
 }
+
 /**
  * find session data in sessions collection using sessionId if exists
  * @param {String} key - session identifier
@@ -106,6 +107,7 @@ async function getSessionData(key) {
         return null
     }
 }
+
 /**
  * Deletes session Object using session id
  * @param {String} key 
@@ -146,6 +148,7 @@ async function validateUser(username, password) {
         return false
     }
 }
+
 /**
  * adds new user to users collection using userInfo Object
  * @param {Object} userInfo contains (username , password, confirmed password, email)
@@ -203,6 +206,7 @@ async function saveComment(comment) {
     comment.timestamp = new Date()
     await commentsCollection.insertOne(comment)
 }
+
 /**
  * getting list of all comment objects of a specific photo using photo Id
  * @param {String} photoId 
@@ -227,6 +231,5 @@ module.exports = {
     saveComment,
     loadComments,
     deleteSession,
-
 }
 

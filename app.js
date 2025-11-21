@@ -136,10 +136,11 @@ app.get('/photos/:id', async (req, res) => {
   } else {
     const comments = await business.getComments(photoId)
     const username = sessionData ?  sessionData.username : undefined
-    const isOwner = sessionData.userId && Number(sessionData.userId)=== Number(photo.owner)
+    const isOwner = sessionData && sessionData.userId && Number(sessionData.userId)=== Number(photo.owner)
     res.render('photos', {isOwner, photo, comments,username, layout: false })
   }
 })
+
 /**
  * Handles new comments validations
  * adding comments and redirect to Photo details page
@@ -168,7 +169,6 @@ app.post('/photos/:id/comment', async (req, res) => {
   res.redirect(`/photos/${photoId}`)
 })
 
-
 /**
  * Renders the edit page for a specific photo.  
  * GET /photos/:id/edit
@@ -180,6 +180,7 @@ app.get('/photos/:id/edit', async (req, res) => {
   const photo = await business.getPhotoDetails(photoId)
   res.render('editphoto', { photo, layout: false })
 })
+
 /**
  * Handles editing photos entries validation (title ,visibility, description)
  * edit photo using updated function to updated photo data

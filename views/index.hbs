@@ -9,7 +9,12 @@
 </head>
 
 <body>
-  <h1>Photo Albums</h1>
+  <header class="site-header">
+    <h1>Media Manager</h1>
+    <a class="logout-btn header-btn" href="/logout">Logout</a>
+  </header>
+
+  <h2>Photo Albums</h2>
 
   {{#if albums}}
   <ul>
@@ -22,10 +27,7 @@
   {{else}}
   <p>No albums found.</p>
   {{/if}}
-
-  <nav>
-    <a href="/logout" class="logout-btn">Logout</a>
-  </nav>
+  
 </body>
 
 </html>

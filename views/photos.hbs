@@ -9,7 +9,14 @@
 </head>
 
 <body>
-    <h1>Photo Details</h1>
+    <header class="site-header">
+        <a class="back-btn header-btn" href="/main">← Back to Albums</a>
+        <h1>Media Manager</h1>
+        <a class="logout-btn header-btn" href="/logout">Logout</a>
+    </header>
+
+    <h2>Photo Details</h2>
+    
     {{#if isOwner}}
     <p><a href="/photos/{{photo._id}}/edit">edit</a></p>
     {{/if}}
@@ -29,7 +36,6 @@
       this.src = '/photos/default.jpg'
     }
   " />
-
 
     <hr>
     <h3>Comments</h3>
@@ -53,8 +59,8 @@
         <textarea id="text" name="text" rows="3" cols="40" required></textarea><br><br>
         <button type="submit">Submit Comment</button>
     </form>
-    <hr>
-    <p><a href="/main">← Back to main page</a></p>
+  <hr>
+    
 </body>
 
 </html>
