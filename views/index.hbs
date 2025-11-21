@@ -17,13 +17,17 @@
   <h2>Photo Albums</h2>
 
   {{#if albums}}
-  <ul>
+  <div class="photo-grid">
     {{#each albums}}
-    <li>
-      <a href="/albums/{{name}}">{{name}}</a>
-    </li>
+    <div class="photo-card">
+      <a href="/albums/{{name}}">
+        <div class="album-box">
+          {{name}}
+        </div>
+      </a>
+    </div>
     {{/each}}
-  </ul>
+  </div>
   {{else}}
   <p>No albums found.</p>
   {{/if}}
