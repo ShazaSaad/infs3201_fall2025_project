@@ -116,3 +116,96 @@ a:hover {
         width: 90%;
     }
 }
+
+/* Grid layout */
+.photo-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 20px;
+  padding: 20px;
+}
+
+/* Each card container */
+.photo-card {
+  text-align: center;
+}
+
+.photo-card a {
+  text-decoration: none;
+  color: black;
+}
+
+/* Thumbnail styling */
+.photo-card img {
+  width: 100%;
+  height: 150px;
+  object-fit: cover;
+  border-radius: 8px;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+/* Hover effect */
+.photo-card img:hover {
+  transform: scale(1.05);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+}
+
+/* Photo name text */
+.photo-name {
+  margin-top: 8px;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+/* Header styling for Media Manager */
+.site-header {
+  width: 100%;
+  max-width: 1100px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 16px;
+  box-sizing: border-box;
+  background: rgba(255,255,255,0.8);
+  border-radius: 8px;
+  margin: 16px 12px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+}
+
+.site-header h1 {
+  flex: 1 1 auto;
+  text-align: center;
+  margin: 0;
+  font-size: 30px;
+  color: #2c3e50;
+}
+
+.header-btn {
+  text-decoration: none;
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-weight: 600;
+}
+
+.back-btn {
+  background-color: #f0f0f0;
+  color: #333;
+  border: 1px solid #ddd;
+}
+
+.back-btn:hover {
+  background-color: #e6e6e6;
+}
+
+.logout-btn {
+  background-color: #d9534f;
+  color: white;
+  padding: 6px 10px;
+  border-radius: 5px;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+/* Make main content sit below header */
+h2 { text-align: center; color: #2c3e50; margin-top: 8px; }
