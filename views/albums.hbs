@@ -9,25 +9,40 @@
 </head>
 
 <body>
-    <h1>Photos in {{album.name}} ({{photos.length}} photos)</h1>
+    <header class="site-header">
+        <a class="back-btn header-btn" href="/main">← Back to Albums</a>
+        <h1>Media Manager</h1>
+        <a class="logout-btn header-btn" href="/logout">Logout</a>
+    </header>
+
+    <h2>Photos in {{albumName}} ({{photos.length}} photos)</h2>
 
     {{#if photos.length}}
-    <ul>
+    <div class="photo-grid">
         {{#each photos}}
-        <li>
-            <a href="/photos/{{this._id}}">{{this.title}}</a>
-        </li>
+        <div class="photo-card">
+            <a href="/photos/{{this._id}}">
+                <img src="/photos/{{this.filename}}" alt="{{this.title}}" onerror="
+                    const exts = ['.jpg', '.jpeg', '.png']
+                    const current = this.src
+                    const nextExt = exts.find(ext => !current.endsWith(ext) && current.includes('/photos/'))
+                    if (nextExt) {
+                    const base = current.replace(/\.(jpg|jpeg|png)$/i, '')
+                    this.onerror = null
+                    this.src = base + nextExt
+                    } else {
+                    this.src = '/photos/default.jpg'
+                    }
+                " />
+                <p class="photo-name">{{this.title}}</p>
+            </a>
+        </div>
         {{/each}}
-    </ul>
+    </div>
     {{else}}
     <p>No photos found in this album.</p>
     {{/if}}
-
-    <p><a href="/main">← Back to Albums</a></p>
     
-    <nav>
-        <a href="/logout" class="logout-btn">Logout</a>
-    </nav>
 </body>
 
 </html>

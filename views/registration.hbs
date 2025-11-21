@@ -7,10 +7,16 @@
     <title>Registration</title>
 </head>
 <body>
+    <header class="site-header">
+        <a class="back-btn header-btn" href="/main">← Back to Albums</a>
+        <h1>Media Manager</h1>
+        <a class="logout-btn header-btn" href="/logout">Logout</a>
+    </header>
+
     {{#if message}}
         <div style="color: red;">{{message}}</div>
     {{/if}}
-    <h1>Registration forum</h1>
+    <h2>Registration forum</h2>
     <form method="post">
         Email: <input name="email"><br>
         Username: <input name="username"><br>
