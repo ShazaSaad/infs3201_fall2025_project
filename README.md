@@ -21,13 +21,13 @@ Phase 1 focuses on **user authentication**, **photo visibility**, and **commenti
 
 ## Features Implemented (Phase 1)
 
-* ✅ User registration and login (authentication)
-* ✅ View all **public** photos and **user-owned** photos
-* ✅ Add **visibility flag** (public/private) for photos
-* ✅ Allow logged-in users to **edit their own photos**
-* ✅ Logged-in users can **comment** on public or owned photos
-* ✅ Comments are **visible to all users**
-* ✅ Non-logged-in users are **redirected** to the login page
+* User registration and login (authentication)
+* View all **public** photos and **user-owned** photos
+* Add **visibility flag** (public/private) for photos
+* Allow logged-in users to **edit their own photos**
+* Logged-in users can **comment** on public or owned photos
+* Comments are **visible to all users**
+* Non-logged-in users are **redirected** to the login page
 
 > Future development (Phase 2) will include album galleries, uploads, email notifications, and search functionality.
 
@@ -54,7 +54,8 @@ INFS3201_FALL2025_PROJECT/
  │       └── styles.css
  ├─ src/
  |   ├── business.js
- |   ├── presentation.js
+ |   ├── presentation.js <-- unused 
+ |   ├── notifications.js <-- a single module to send notifications
  |   └── persistence.js   
  ├─ views/
  |   ├─ layouts/
@@ -65,6 +66,7 @@ INFS3201_FALL2025_PROJECT/
  │   ├─ error.hbs
  │   ├─ login.hbs
  │   ├─ registration.hbs
+ │   ├─ search.hbs
  │   └── editphoto.hbs
  ├─ .gitignore
  ├─ app.js
