@@ -217,7 +217,7 @@ app.get('/search', async (req, res) => {
   const sessionData = await business.getSessionData(req.cookies.sessionKey)
   const userId = sessionData ? sessionData.userId : null
   const results = await business.searchPhotos(q, userId)
-  res.render('searchresults', { query: q, results, layout: false })
+  res.render('search', { query: q, results, layout: false })
 })
 
 // Start the server

@@ -16,6 +16,12 @@
 
   <h2>Photo Albums</h2>
 
+  <form action="/search" method="GET" style="margin-top: 20px; width: 320px;">
+    <input type="text" name="q" placeholder="Search photos..." required>
+    <input type="submit" value="Search">
+  </form>
+
+
   {{#if albums}}
   <div class="photo-grid">
     {{#each albums}}
@@ -31,7 +37,7 @@
   {{else}}
   <p>No albums found.</p>
   {{/if}}
-  
+
 </body>
 
 </html>
