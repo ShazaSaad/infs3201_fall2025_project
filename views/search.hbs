@@ -12,18 +12,31 @@
     <h2>Search results for "{{query}}"</h2>
 
     <div class="photo-grid">
-        {{#each photos}}
+        {{#each results}}
         <div class="photo-card">
             <a href="/photos/{{this._id}}">
-                <img src="{{this.path}}" alt="photo">
+                <img src="/photos/{{this.filename}}" alt="{{this.title}}" onerror="
+        const exts = ['.jpg','.jpeg','.png'];
+        const current = this.src;
+        const base = current.replace(/\.(jpg|jpeg|png)$/i,'');
+        const nextExt = exts.find(ext => !current.endsWith(ext));
+        if(nextExt){
+          this.onerror=null;
+          this.src=base+nextExt;
+        } else {
+          this.onerror=null;
+          this.src='/photos/default.jpg';
+        }
+      " />
                 <div class="photo-name">{{this.title}}</div>
             </a>
         </div>
         {{/each}}
 
-        {{#unless photos.length}}
+        {{#unless results.length}}
         <p>No matching photos found.</p>
         {{/unless}}
+
     </div>
 
 

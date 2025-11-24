@@ -224,10 +224,9 @@ async function searchPhotos(query, userId) {
   let results = []
   for (let photo of photos) {
     const matches= 
-    (photo.title || photo.title.toLowerCase().includes(term)) ||
-    (photo.description || photo.description.toLowerCase().includes(term)) ||
-    (photo.tags || photo.tags.some(tag => tag.toLowerCase().includes(term)))
-
+    (photo.title && photo.title.toLowerCase().includes(term)) ||
+    (photo.description && photo.description.toLowerCase().includes(term)) ||
+    (photo.tags && photo.tags.some(tag => tag.toLowerCase().includes(term)))
     if (!matches) {
       continue
     }
