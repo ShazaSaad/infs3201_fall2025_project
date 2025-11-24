@@ -220,6 +220,13 @@ async function loadComments(photoId) {
     return comments
 }
 
+async function getUserById(userId) {
+    await connectDatabase()
+    const db = client.db('infs3201_fall2025')
+    return await db.collection('users').findOne({ userID: userId })
+}
+
+
 module.exports = {
     loadPhotos,
     savePhotos,
@@ -231,5 +238,6 @@ module.exports = {
     saveComment,
     loadComments,
     deleteSession,
+    getUserById
 }
 
