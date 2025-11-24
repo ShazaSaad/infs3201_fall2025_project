@@ -1,4 +1,5 @@
 const persistence = require('./persistence')
+const notifications = require('./notifications')
 const crypto = require('crypto')
 /**
  * Retrieves a list of all albums.
@@ -22,7 +23,7 @@ async function listAlbums() {
 async function updatePhotoDetails(photoId, newTitle, newDescription, newVisibility, sessionKey) {
   const photos = await persistence.loadPhotos()
   let sessionData = await getSessionData(sessionKey)
-  let userId= sessionData.userId
+  let userId = sessionData.userId
   for (let i = 0; i < photos.length; i++) {
     if (photos[i]._id == photoId && (sessionData && photos[i].owner === userId)) {
       if (newTitle) photos[i].title = newTitle
@@ -42,7 +43,7 @@ async function updatePhotoDetails(photoId, newTitle, newDescription, newVisibili
   * @param {Number } ownerID - to enable access for eligibile users to private photo+ public ones
   * @return {Promise<Object>} An object containing either the list of photos or an error message.
   */
- 
+
 async function albumPhotoListByowner(albumName, ownerID) {
   const albums = await persistence.loadAlbums()
   const photos = await persistence.loadPhotos()
@@ -172,14 +173,31 @@ async function addComment(photoId, username, text) {
   if (!text || !text.trim()) {
     return { error: 'Comment text cannot be empty.' }
   }
-  const comment = {
-    photoId: photoId,
-    username: username,
+
+  // Save comment
+  await persistence.saveComment({
+    photoId,
+    username,
     text: text.trim(),
-    timestamp: new Date().toISOString()
+    timestamp: new Date()
+  })
+
+  // Load photo
+  const photo = await persistence.loadPhotos()
+    .then(photos => photos.find(p => p._id.toString() === photoId))
+
+  if (!photo) return { success: true }
+
+  // Get owner info
+  const owner = await persistence.getUserById(photo.owner)
+
+  if (owner && owner.email) {
+    sendMail(
+      owner.email,
+      "New Comment on Your Photo",
+      `User ${username} commented:\n\n"${text}"`
+    )
   }
-  await persistence.saveComment(comment)
-  return { success: true }
 }
 
 /**
@@ -199,6 +217,7 @@ async function getComments(photoId) {
 
   return formattedComments
 }
+
 
 module.exports = {
   listAlbums,
