@@ -1,5 +1,5 @@
 const persistence = require('./persistence')
-const notifications = require('./notifications')
+const  { sendMail } = require('./notifications')
 const crypto = require('crypto')
 /**
  * Retrieves a list of all albums.
