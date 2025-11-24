@@ -218,6 +218,25 @@ async function getComments(photoId) {
   return formattedComments
 }
 
+async function searchPhotos(query, userId) {
+  const photos = await persistence.loadPhotos()
+  const term = query.trim().toLowerCase()
+  let results = []
+  for (let photo of photos) {
+    const matches= 
+    (photo.title && photo.title.toLowerCase().includes(term)) ||
+    (photo.description && photo.description.toLowerCase().includes(term)) ||
+    (photo.tags && photo.tags.some(tag => tag.toLowerCase().includes(term)))
+
+    if (!matches) {
+      continue
+    }
+    if (photo.visibitlity === 'public' || Number(photo.owner) === Number(userId)) {
+      results.push(photo)
+    }
+  }
+  return results
+}
 
 module.exports = {
   listAlbums,
@@ -230,5 +249,6 @@ module.exports = {
   getComments,
   startSession,
   getSessionData,
-  deleteSession
+  deleteSession,
+  searchPhotos
 }

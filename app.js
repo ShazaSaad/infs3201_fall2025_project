@@ -212,5 +212,13 @@ app.get('/logout', async (req, res) => {
   res.redirect('/')
 })
 
+app.get('/search', async (req, res) => {
+  const q = req.query.q
+  const sessionData = await business.getSessionData(req.cookies.sessionKey)
+  const userId = sessionData ? sessionData.userId : null
+  const results = await business.searchPhotos(q, userId)
+  res.render('searchresults', { query: q, results, layout: false })
+})
+
 // Start the server
 app.listen(8000, () => console.log('Server running'))
