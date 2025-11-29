@@ -2,6 +2,7 @@ const express = require('express')
 const bodyParser = require('body-parser')
 const cookieParser = require('cookie-parser')
 const { engine } = require('express-handlebars')
+const fileUpload = require('express-fileupload')
 const path = require('path')
 const business = require('./src/business')
 
@@ -23,6 +24,8 @@ app.set('views', path.join(__dirname, 'views'))
 // Serve static files from the 'public' directory
 app.use(express.static(path.join(__dirname, 'public')))
 
+// serve uploaded image file from upload form page
+app.use(fileUpload())
 /**
  * Renders the homepage with a list of albums.  
  * GET /
@@ -121,6 +124,22 @@ app.get('/albums/:name', async (req, res) => {
     res.status(500).render('error', { message: 'Failed to load album.', layout: false })
   }
 })
+
+app.get("/albums/:name/upload" ,async(req,res)=>{
+    const albumName = req.params.name
+    res.render('upload', {albumName,layout: false})
+  
+
+})
+app.post("/albums/:name/upload" ,async (req, res)=>{
+  const albumName = req.params.name
+  const uploaded =req.files.uploaded_photo
+  console.log(uploaded)
+  //upload new photo to folder photos as temporary location
+  await uploaded.mv(__dirname+"/Public/photos/"+Date.now()+'_'+uploaded.name)
+
+})
+
 
 /**
  * Renders the details page for a specific photo.  
