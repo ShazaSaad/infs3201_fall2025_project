@@ -92,7 +92,15 @@ div[style*="color: red;"] {
     text-align: center;
     width: 320px;
 }
+input[type="file"]{
+  display: inline-block;
+  padding: 10px 20px;
+  color: black; 
+  font-size: 20px;
 
+  border-radius: 10px;
+  cursor: pointer; 
+}
 /* "Sign up" link under login form */
 a {
     color: #007bff;
