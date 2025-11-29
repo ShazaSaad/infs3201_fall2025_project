@@ -1,6 +1,8 @@
 const persistence = require('./persistence')
 const  { sendMail } = require('./notifications')
 const crypto = require('crypto')
+const { timeStamp } = require('console')
+const { title } = require('process')
 /**
  * Retrieves a list of all albums.
  * @return {Promise<Array>} An array of album objects.
@@ -73,7 +75,6 @@ async function albumPhotoListByowner(albumName, ownerID) {
       }
     }
   }
-
   return { success: true, data: foundPhotos, album }
 }
 
@@ -95,6 +96,44 @@ async function getPhotoDetails(photoId) {
   }
   return null
 }
+/**
+ * generate random id that dosen't exists in the photos collection
+ * @returns random id for newly added photos
+ */
+function photoID_generator(){
+  let id = Math.floor(1000+ Math.random()*9000)
+  while(getPhotoDetails(id)){
+    id = Math.floor(1000+ Math.random()*9000)
+    
+  }
+  return id
+   
+
+}
+/**
+ * it inserts one photo and the specific the parameters of photos objects
+ * @param {file} photo_file 
+ * @param {number} userID 
+ * @param {String} fileName 
+ * @param {String} albumName 
+ */
+async function addPhoto(photo_file , userID,fileName, albumName ) {
+  let formatted_date =new Date()
+  formatted_date = formatted_date.split(".")[0]
+  let photo ={ 
+    id: photoID_generator(),
+    owner: userID,
+    filename: fileName,
+    title:"",
+    date: formatted_date,
+    description:"",
+    resolution: "1000x1000",
+    albums: [albumName],
+    tags:[],
+    visibitlity: "private"
+  }
+}
+
 /**
  * to validate users according to their username and password to access photos
  * @param {String} username - for validation

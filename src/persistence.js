@@ -61,6 +61,17 @@ async function savePhotos(photos) {
     await photosCollection.deleteMany({})
     await photosCollection.insertMany(photos)
 }
+/**
+ * Insert One photo object
+ * @param {Object} photo 
+ */
+async function insertPhoto(photo) {
+    await connectDatabase()
+    const db = client.db('infs3201_fall2025')
+    const photosCollection = db.collection('photos')
+    await photosCollection.insertOne(photo)
+}
+    
 
 /**
  * Loads all albums from the 'albums' collection in the database.
@@ -230,6 +241,7 @@ async function getUserById(userId) {
 module.exports = {
     loadPhotos,
     savePhotos,
+    insertPhoto,
     loadAlbums,
     validateUser,
     register,
