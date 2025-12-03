@@ -2,7 +2,20 @@ img {
     max-width: 300px;
     height: auto;
 }
+body{
+      size: auto;
+      padding: auto;
+}
+#fade{
+  color: darkgrey;
 
+}
+.error{
+  color: #d9534f;
+}
+.success{
+  color: green;
+}
 .logout-btn {
   background-color: #d9534f;
   color: white;
