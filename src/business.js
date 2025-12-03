@@ -117,8 +117,8 @@ function photoID_generator(){
  * @param {String} fileName 
  * @param {String} albumName 
  */
-async function addPhoto(photo_file , userID,fileName, albumName ) {
-  let formatted_date =new Date()
+async function addPhoto( userID,fileName, albumName ) {
+  let formatted_date =new Date().toISOString().split('.')[0].replace('T',' ')
   formatted_date = formatted_date.split(".")[0]
   let photo ={ 
     id: photoID_generator(),
@@ -132,6 +132,7 @@ async function addPhoto(photo_file , userID,fileName, albumName ) {
     tags:[],
     visibitlity: "private"
   }
+  await persistence.insertPhoto(photo)
 }
 
 /**
@@ -279,6 +280,7 @@ async function searchPhotos(query, userId) {
 module.exports = {
   listAlbums,
   updatePhotoDetails,
+  addPhoto,
   albumPhotoListByowner,
   getPhotoDetails,
   validateUser,

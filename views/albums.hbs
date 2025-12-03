@@ -42,9 +42,24 @@
     {{else}}
     <p>No photos found in this album.</p>
     {{/if}}
-    <div>
-        <h3>Upload new photo to the current Album <a href="/albums/{{albumName}}/upload"> Click here! </a></h3>
-    </div>
+     
+    <form action="/albums/:name/upload" method="post" enctype="multipart/form-data">
+        <h3>Upload new photo to {{albumName}} album</h3><br>
+
+        {{#if error}}
+            <div class='error'>{{error}}</div>
+        {{/if}}
+        {{#if success}}
+            <div class="success" >{{success}}</div>
+        {{/if}}
+        <input type="file" name="uploaded_photo" accept=".jpg, .jpeg, .png" id="uploadButton"  required><br>
+        <p id="fade">it accepts .jpg .jpeg or .png only!</p>
+        <input type="hidden" name="fileName" value=>
+        <input type= "hidden" name="userID" value ="">
+        <input type="hidden" name="albumName" value={{albumName}}>
+
+     <button >Upload</button>
+    </form>
 </body>
 
 </html>

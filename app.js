@@ -5,6 +5,7 @@ const { engine } = require('express-handlebars')
 const fileUpload = require('express-fileupload')
 const path = require('path')
 const business = require('./src/business')
+const { error } = require('console')
 
 
 // Create Express app
@@ -117,6 +118,8 @@ app.get('/albums/:name', async (req, res) => {
       res.render('albums', {
         albumName,
         photos: result.data,
+        error: req.query.error,
+        success: req.query.success,
         layout: false
       })
     }
@@ -125,18 +128,27 @@ app.get('/albums/:name', async (req, res) => {
   }
 })
 
-app.get("/albums/:name/upload" ,async(req,res)=>{
-    const albumName = req.params.name
-    res.render('upload', {albumName,layout: false})
-  
 
-})
 app.post("/albums/:name/upload" ,async (req, res)=>{
   const albumName = req.params.name
   const uploaded =req.files.uploaded_photo
   console.log(uploaded)
+  if (!req.files || !req.files.uploaded_photo){
+    return res.redirect(`/albums/${albumName}?error=No File Uploaded`)
+  }
+    console.log(uploaded)
+  const allowedTypes = ['image/jpeg', 'image/png' , 'image/jpg']
+  if(! allowedTypes.includes(uploaded.mimetype)){//checking file type and generates 
   //upload new photo to folder photos as temporary location
-  await uploaded.mv(__dirname+"/Public/photos/"+Date.now()+'_'+uploaded.name)
+    return res.redirect(`/albums/${albumName}?error=invalid file type`)
+  }
+  if(allowedTypes.includes(uploaded.mimetype)){
+    await uploaded.mv(__dirname+"/Public/photos/"+Date.now()+'_'+uploaded.name)
+    await business.addPhoto( ownerId ,uploaded.name,albumName)
+    return res.redirect('/albums/:name/?success=uploade successfully')
+  }else{
+    return res.redirect(`/albums/${albumName}?error = Upload faild`)
+  }
 
 })
 
