@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0", http-equiv="refresh">
     <link rel="stylesheet" href="/css/styles.css">
     <title>Albums</title>
 </head>
@@ -42,23 +42,21 @@
     {{else}}
     <p>No photos found in this album.</p>
     {{/if}}
-     
-    <form action="/albums/:name/upload" method="post" enctype="multipart/form-data">
-        <h3>Upload new photo to {{albumName}} album</h3><br>
-
+     <h3>Upload new photo to {{albumName}} album</h3>
+    <form action="/albums/{{albumName}}/upload" method="post" enctype="multipart/form-data">
         {{#if error}}
             <div class='error'>{{error}}</div>
         {{/if}}
         {{#if success}}
             <div class="success" >{{success}}</div>
         {{/if}}
-        <input type="file" name="uploaded_photo" accept=".jpg, .jpeg, .png" id="uploadButton"  required><br>
+        <label id="uploadButton" for="uploadButton">Upload:</label><br>
+        <input type="file" name="uploaded_photo" accept=" .jpg, .jpeg, .png" id="uploadButton"  required title="upload a photo file"><br>
         <p id="fade">it accepts .jpg .jpeg or .png only!</p>
-        <input type="hidden" name="fileName" value=>
-        <input type= "hidden" name="userID" value ="">
+
         <input type="hidden" name="albumName" value={{albumName}}>
 
-     <button >Upload</button>
+     <button type="submit">Upload</button>
     </form>
 </body>
 

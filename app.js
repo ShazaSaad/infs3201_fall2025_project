@@ -26,7 +26,17 @@ app.set('views', path.join(__dirname, 'views'))
 app.use(express.static(path.join(__dirname, 'public')))
 
 // serve uploaded image file from upload form page
-app.use(fileUpload())
+// using temporary location and then moved to the /puplic/photos
+// to avoid overwellming heap
+/*
+app.use(fileUpload({
+  useTempFiles: true, // carry them to disk instead of RAM
+  tempFileDir: path.join(__dirname, 'public', 'temp'),
+  limits:{fileSize: 10* 1024* 1024}, //limit of uploading file with more than 5MB
+  createParentPath: true
+}))
+  */
+ app.use(fileUpload())
 /**
  * Renders the homepage with a list of albums.  
  * GET /
@@ -39,8 +49,6 @@ app.get('/', async (req, res) => {
     message: message
   })
 })
-let ownerId = 0
-
 /**
  * Handles log in requests of users
  * redirects existed users to /main page
@@ -51,7 +59,6 @@ app.post('/', async (req, res) => {
   let password = req.body.password
   // validateUser if true returns object {status: true ,userId: user.userID}
   let valid = await business.validateUser(username, password)
-  ownerId = valid.userId
   if (valid.status) {
     let sessionKey = await business.startSession({ username: username, userId: valid.userId })
     res.cookie('sessionKey', sessionKey, { httpOnly: true })
@@ -110,7 +117,9 @@ app.get('/main', async (req, res) => {
 app.get('/albums/:name', async (req, res) => {
   try {
     const albumName = req.params.name
-    const result = await business.albumPhotoListByowner(albumName, ownerId)
+    const sessionkey = req.cookies.sessionKey
+    const sessionData = await business.getSessionData(sessionkey)
+    const result = await business.albumPhotoListByowner(albumName, sessionData.userId)
 
     if (result.error) {
       res.status(404).render('error', { message: result.error, layout: false })
@@ -124,34 +133,105 @@ app.get('/albums/:name', async (req, res) => {
       })
     }
   } catch (error) {
+    console.error(error)
     res.status(500).render('error', { message: 'Failed to load album.', layout: false })
   }
 })
 
-
-app.post("/albums/:name/upload" ,async (req, res)=>{
+/*
+app.post("/albums/:name/upload", async (req, res) => {
+  const sessionkey= req.cookies.sessionKey
+  const sessionData = await business.getSessionData(sessionkey)
   const albumName = req.params.name
-  const uploaded =req.files.uploaded_photo
-  console.log(uploaded)
-  if (!req.files || !req.files.uploaded_photo){
-    return res.redirect(`/albums/${albumName}?error=No File Uploaded`)
-  }
-    console.log(uploaded)
-  const allowedTypes = ['image/jpeg', 'image/png' , 'image/jpg']
-  if(! allowedTypes.includes(uploaded.mimetype)){//checking file type and generates 
-  //upload new photo to folder photos as temporary location
-    return res.redirect(`/albums/${albumName}?error=invalid file type`)
-  }
-  if(allowedTypes.includes(uploaded.mimetype)){
-    await uploaded.mv(__dirname+"/Public/photos/"+Date.now()+'_'+uploaded.name)
-    await business.addPhoto( ownerId ,uploaded.name,albumName)
-    return res.redirect('/albums/:name/?success=uploade successfully')
-  }else{
+  const uploaded = req.files.uploaded_photo
+
+  try {
+    if (!req.files || !req.files.uploaded_photo) {
+      return res.redirect(`/albums/${albumName}?error=No File Uploaded`)
+    }
+    const allowedTypes = ['image/jpeg', 'image/png', 'image/jpg']
+
+
+    if (!allowedTypes.includes(uploaded.mimetype)) {//checking file type and generates 
+      //upload new photo to folder photos as temporary location
+      return res.redirect(`/albums/${albumName}?error=invalid file type`)
+    }
+    if (allowedTypes.includes(uploaded.mimetype)) {
+      const filepath = __dirname+'/public/photos/'+Date.now()+'_'+uploaded.name
+      await uploaded.mv(filepath)
+      await business.addPhoto(sessionData.userId, uploaded.name, albumName)
+      return res.redirect(`/albums/${albumName}/?success=uploade successfully`)
+    }
+
+  } catch (error) {
     return res.redirect(`/albums/${albumName}?error = Upload faild`)
   }
 
 })
+*/
 
+app.post("/albums/:name/upload", async (req, res) => {
+  /*
+  let fileInfo= req.files.uploaded_photo
+  let albumName = req.params.name
+  let sessionKey = req.cookies.sessionKey
+  let sessionData = await business.getSessionData(sessionKey)
+  let owner= sessionData.userId
+  let filename = fileInfo.name
+  console.log("session id",owner )
+  let result = await business.albumPhotoListByowner(albumName,owner)
+  let addition_process = await business.addPhoto(owner,filename,albumName)
+  //console.log(addition_process)
+  console.log("file\n: ",fileInfo)
+  res.status(302).render('albums', {
+        albumName,
+        photos: result.data,
+        error: req.query.error,
+        success: req.query.success,
+        layout: false
+      })
+  */
+  
+  let albumName = req.params.name
+  let sessionKey = req.cookies.sessionKey
+  let sessionData = await business.getSessionData(sessionKey)
+//check if user logged in
+  if (!sessionData) {
+    res.status(403).render('error', { message: "Not permitted to upload.. please login!", layout: false })
+  }
+  if (!req.files || !req.files.uploaded_photo) {
+    return res.status(400).redirect(`/albums/${albumName}?error=No file uploaded`)
+  }
+  const uploaded = req.files.uploaded_photo
+  //filtering image type before insertion
+  const allowedTypes = ['image/jpeg', 'image/png', 'image/jpg']
+
+
+  if (!allowedTypes.includes(uploaded.mimetype)) {//checking file type and generates 
+    //upload new photo to folder photos as temporary location
+    return res.status(400).redirect(`/albums/${albumName}?error=invalid file type`)
+  }
+  // the temporary file
+  //console.log("Temporary file path on disk: ", uploaded.tempFilePath)
+
+
+  let filename= Date.now() +"_"+path.basename(uploaded.name)
+  let finalPath = path.join(__dirname,'Public','photos', filename)
+  try{
+    await uploaded.mv(finalPath)
+    await business.addPhoto(sessionData.userId,filename, albumName)
+    let addition_process =await business.addPhoto(sessionData.userId,filename, albumName)
+    if(addition_process.status){
+      return res.status(302).redirect(`/albums/${albumName}?success=uploaded successfully`)
+    }else{
+      return res.status(400).redirect(`/albums/${albumName}?error=failed to save photo info`)
+    }
+  }catch(err){
+    console.error(err)
+    return res.redirect(`/albums/${albumName}?error=Upload failed`)
+  }
+
+})
 
 /**
  * Renders the details page for a specific photo.  
@@ -166,9 +246,9 @@ app.get('/photos/:id', async (req, res) => {
     res.status(404).render('error', { message: 'Photo not found.', layout: false })
   } else {
     const comments = await business.getComments(photoId)
-    const username = sessionData ?  sessionData.username : undefined
-    const isOwner = sessionData && sessionData.userId && Number(sessionData.userId)=== Number(photo.owner)
-    res.render('photos', {isOwner, photo, comments,username, layout: false })
+    const username = sessionData ? sessionData.username : undefined
+    const isOwner = sessionData && sessionData.userId && Number(sessionData.userId) === Number(photo.owner)
+    res.render('photos', { isOwner, photo, comments, username, layout: false })
   }
 })
 
@@ -222,7 +302,7 @@ app.post('/photos/:id/edit', async (req, res) => {
   const sessionKey = req.cookies.sessionKey
   const { title, description } = req.body
   const phototype = req.body.visibility
-  await business.updatePhotoDetails(photoId, title, description, phototype,sessionKey)
+  await business.updatePhotoDetails(photoId, title, description, phototype, sessionKey)
   res.redirect(`/photos/${photoId}`)
 })
 

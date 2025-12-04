@@ -5,10 +5,15 @@ img {
 body{
       size: auto;
       padding: auto;
+      margin: auto;
 }
 #fade{
   color: darkgrey;
 
+}
+#uploadButton{
+  font-weight: bold;
+  font-size: large;
 }
 .error{
   color: #d9534f;

@@ -69,14 +69,15 @@ async function insertPhoto(photo) {
     await connectDatabase()
     const db = client.db('infs3201_fall2025')
     const photosCollection = db.collection('photos')
-    let insertion = await photosCollection.insertOne(photo)
+    let insertion= await photosCollection.insertOne(photo)
     console.log("photo object in persitence: ", photo)
-    if(insertion){
-        return true
+    //console.log(insertion)
+    if(!insertion.insertedId){
+        return false
     }
-    return false
-}
+    return true
     
+}
 
 /**
  * Loads all albums from the 'albums' collection in the database.

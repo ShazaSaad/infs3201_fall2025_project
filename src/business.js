@@ -100,31 +100,24 @@ async function getPhotoDetails(photoId) {
  * generate random id that dosen't exists in the photos collection
  * @returns random id for newly added photos
  */
-function photoID_generator(){
+async function photoID_generator(){
   let id = Math.floor(1000+ Math.random()*9000)
-  while(getPhotoDetails(id)){
-    id = Math.floor(1000+ Math.random()*9000)
-    
-  }
   return id
-   
-
 }
+
 /**
  * it inserts one photo and the specific the parameters of photos objects
- * @param {file} photo_file 
  * @param {number} userID 
  * @param {String} fileName 
  * @param {String} albumName 
  */
-async function addPhoto( userID,fileName, albumName ) {
-  let formatted_date =new Date().toISOString().split('.')[0].replace('T',' ')
+async function addPhoto(userID,fileName, albumName ) {
   let photo ={ 
-    id: photoID_generator(),
+    id: await photoID_generator(),
     owner: userID,
     filename: fileName,
     title:"",
-    date: formatted_date,
+    date: String(new Date().toISOString().split('.')[0].replace('T',' ')),
     description:"",
     resolution: "1000x1000",
     albums: [albumName],
@@ -132,15 +125,15 @@ async function addPhoto( userID,fileName, albumName ) {
     visibitlity: "private"
   }
   let insertion_success =await persistence.insertPhoto(photo)
-  console.log("photo object in business: ", photo, formatted_date)
+  //console.log("photo object in business: ", photo)
   if(!photo || !insertion_success){
+    //console.log({error:"Faild to add photo to the server" , status:false})
     return {error:"Faild to add photo to the server" , status:false}
   }
+  //console.log({success: "successfully uploaded.. ", status: true})
   return {success: "successfully uploaded.. ", status: true}
 
 }
-
-
 /**
  * to validate users according to their username and password to access photos
  * @param {String} username - for validation
