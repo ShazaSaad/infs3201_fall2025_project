@@ -277,6 +277,16 @@ async function searchPhotos(query, userId) {
   return results
 }
 
+async function addNotification(userId, photoId, message) {
+    const notif = { userId, photoId, message }
+    return await persistence.saveNotification(notif)
+}
+
+async function getNotifications(userId) {
+    return await persistence.getNotifications(userId)
+}
+
+
 module.exports = {
   listAlbums,
   updatePhotoDetails,
@@ -290,5 +300,7 @@ module.exports = {
   startSession,
   getSessionData,
   deleteSession,
-  searchPhotos
+  searchPhotos,
+  getNotifications,
+  addNotification
 }

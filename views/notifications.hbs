@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="/css/styles.css">
+    <title>notifications</title>
+</head>
+
+<body>
+    <h1>Your Notifications</h1>
+
+    {{#if notifications.length}}
+    <ul>
+        {{#each notifications}}
+        <li>
+            <p>{{message}}</p>
+            <small>{{timestamp}}</small>
+            <br>
+            <a href="/photos/{{photoId}}">View Photo</a>
+            <hr>
+        </li>
+        {{/each}}
+    </ul>
+    {{else}}
+    <p>No notifications available.</p>
+    {{/if}}
+
+</body>
+
+</html>

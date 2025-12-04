@@ -251,5 +251,16 @@ app.get('/search', async (req, res) => {
   res.render('search', { query: q, results, layout: false })
 })
 
+app.get('/notifications', async (req, res) => {
+    const sessionData = await business.getSessionData(req.cookies.sessionKey)
+    if (!sessionData) {
+        return res.redirect('/?message=Please log in first')
+    }
+
+    const notifications = await business.getNotifications(sessionData.userId)
+    res.render('notifications', { notifications, layout: false })
+})
+
+
 // Start the server
 app.listen(8000, () => console.log('Server running'))
