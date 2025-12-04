@@ -1,5 +1,5 @@
 const persistence = require('./persistence')
-const  { sendMail } = require('./notifications')
+const { sendMail } = require('./notifications')
 const crypto = require('crypto')
 const { timeStamp } = require('console')
 const { title } = require('process')
@@ -100,8 +100,18 @@ async function getPhotoDetails(photoId) {
  * generate random id that dosen't exists in the photos collection
  * @returns random id for newly added photos
  */
+<<<<<<< HEAD
 async function photoID_generator(){
   let id = Math.floor(1000+ Math.random()*9000)
+=======
+async function photoID_generator() {
+  let id
+  while (true) {
+    id = Math.floor(1000 + Math.random() * 9000)
+    const existing = await getPhotoDetails(id.toString())
+    if (!existing) break
+  }
+>>>>>>> f62270302fc7acbf9994bd9f715544cc54904f3c
   return id
 }
 
@@ -111,6 +121,7 @@ async function photoID_generator(){
  * @param {String} fileName 
  * @param {String} albumName 
  */
+<<<<<<< HEAD
 async function addPhoto(userID,fileName, albumName ) {
   let photo ={ 
     id: await photoID_generator(),
@@ -119,9 +130,21 @@ async function addPhoto(userID,fileName, albumName ) {
     title:"",
     date: String(new Date().toISOString().split('.')[0].replace('T',' ')),
     description:"",
+=======
+async function addPhoto(userID, fileName, albumName) {
+  let formatted_date = new Date().toISOString().split('.')[0].replace('T', ' ')
+  formatted_date = formatted_date.split(".")[0]
+  let photo = {
+    _id: await photoID_generator(),    // ← FIXED
+    owner: userID,
+    filename: fileName,
+    title: "",
+    date: formatted_date,
+    description: "",
+>>>>>>> f62270302fc7acbf9994bd9f715544cc54904f3c
     resolution: "1000x1000",
     albums: [albumName],
-    tags:[],
+    tags: [],
     visibitlity: "private"
   }
   let insertion_success =await persistence.insertPhoto(photo)
@@ -268,10 +291,10 @@ async function searchPhotos(query, userId) {
   const term = query.trim().toLowerCase()
   let results = []
   for (let photo of photos) {
-    const matches= 
-    (photo.title && photo.title.toLowerCase().includes(term)) ||
-    (photo.description && photo.description.toLowerCase().includes(term)) ||
-    (photo.tags && photo.tags.some(tag => tag.toLowerCase().includes(term)))
+    const matches =
+      (photo.title && photo.title.toLowerCase().includes(term)) ||
+      (photo.description && photo.description.toLowerCase().includes(term)) ||
+      (photo.tags && photo.tags.some(tag => tag.toLowerCase().includes(term)))
     if (!matches) {
       continue
     }
@@ -283,12 +306,12 @@ async function searchPhotos(query, userId) {
 }
 
 async function addNotification(userId, photoId, message) {
-    const notif = { userId, photoId, message }
-    return await persistence.saveNotification(notif)
+  const notif = { userId, photoId, message }
+  return await persistence.saveNotification(notif)
 }
 
 async function getNotifications(userId) {
-    return await persistence.getNotifications(userId)
+  return await persistence.getNotifications(userId)
 }
 
 

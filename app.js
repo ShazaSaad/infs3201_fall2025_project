@@ -140,6 +140,7 @@ app.get('/albums/:name', async (req, res) => {
 
 
 app.post("/albums/:name/upload", async (req, res) => {
+<<<<<<< HEAD
 
   let albumName = req.params.name
   let sessionKey = req.cookies.sessionKey
@@ -184,6 +185,24 @@ app.post("/albums/:name/upload", async (req, res) => {
     return res.redirect(`/albums/${albumName}?error=Upload failed`)
   }
 
+=======
+  const albumName = req.params.name
+
+  if (!req.files || !req.files.uploaded_photo) {
+    return res.redirect(`/albums/${albumName}?error=No File Uploaded`)
+  }
+
+  const uploaded = req.files.uploaded_photo
+
+  const allowedTypes = ['image/jpeg', 'image/png', 'image/jpg']
+  if (!allowedTypes.includes(uploaded.mimetype)) {
+    return res.redirect(`/albums/${albumName}?error=Invalid file type`)
+  }
+  const finalName = Date.now() + "_" + uploaded.name
+  await uploaded.mv(path.join(__dirname, "public/photos/", finalName))
+  await business.addPhoto(ownerId, finalName, albumName)
+  return res.redirect(`/albums/${albumName}?success=Uploaded successfully`)
+>>>>>>> f62270302fc7acbf9994bd9f715544cc54904f3c
 })
 
 /**
