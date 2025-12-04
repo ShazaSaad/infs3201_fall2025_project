@@ -119,7 +119,6 @@ function photoID_generator(){
  */
 async function addPhoto( userID,fileName, albumName ) {
   let formatted_date =new Date().toISOString().split('.')[0].replace('T',' ')
-  formatted_date = formatted_date.split(".")[0]
   let photo ={ 
     id: photoID_generator(),
     owner: userID,
@@ -132,8 +131,15 @@ async function addPhoto( userID,fileName, albumName ) {
     tags:[],
     visibitlity: "private"
   }
-  await persistence.insertPhoto(photo)
+  let insertion_success =await persistence.insertPhoto(photo)
+  console.log("photo object in business: ", photo, formatted_date)
+  if(!photo || !insertion_success){
+    return {error:"Faild to add photo to the server" , status:false}
+  }
+  return {success: "successfully uploaded.. ", status: true}
+
 }
+
 
 /**
  * to validate users according to their username and password to access photos

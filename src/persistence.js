@@ -69,7 +69,12 @@ async function insertPhoto(photo) {
     await connectDatabase()
     const db = client.db('infs3201_fall2025')
     const photosCollection = db.collection('photos')
-    await photosCollection.insertOne(photo)
+    let insertion = await photosCollection.insertOne(photo)
+    console.log("photo object in persitence: ", photo)
+    if(insertion){
+        return true
+    }
+    return false
 }
     
 
