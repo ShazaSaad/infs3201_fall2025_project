@@ -129,24 +129,24 @@ app.get('/albums/:name', async (req, res) => {
 })
 
 
-app.post("/albums/:name/upload" ,async (req, res)=>{
+app.post("/albums/:name/upload", async (req, res) => {
   const albumName = req.params.name
-  const uploaded =req.files.uploaded_photo
+  const uploaded = req.files.uploaded_photo
   console.log(uploaded)
-  if (!req.files || !req.files.uploaded_photo){
+  if (!req.files || !req.files.uploaded_photo) {
     return res.redirect(`/albums/${albumName}?error=No File Uploaded`)
   }
-    console.log(uploaded)
-  const allowedTypes = ['image/jpeg', 'image/png' , 'image/jpg']
-  if(! allowedTypes.includes(uploaded.mimetype)){//checking file type and generates 
-  //upload new photo to folder photos as temporary location
+  console.log(uploaded)
+  const allowedTypes = ['image/jpeg', 'image/png', 'image/jpg']
+  if (!allowedTypes.includes(uploaded.mimetype)) {//checking file type and generates 
+    //upload new photo to folder photos as temporary location
     return res.redirect(`/albums/${albumName}?error=invalid file type`)
   }
-  if(allowedTypes.includes(uploaded.mimetype)){
-    await uploaded.mv(__dirname+"/Public/photos/"+Date.now()+'_'+uploaded.name)
-    await business.addPhoto( ownerId ,uploaded.name,albumName)
+  if (allowedTypes.includes(uploaded.mimetype)) {
+    await uploaded.mv(__dirname + "/Public/photos/" + Date.now() + '_' + uploaded.name)
+    await business.addPhoto(ownerId, uploaded.name, albumName)
     return res.redirect('/albums/:name/?success=uploade successfully')
-  }else{
+  } else {
     return res.redirect(`/albums/${albumName}?error = Upload faild`)
   }
 
@@ -166,9 +166,9 @@ app.get('/photos/:id', async (req, res) => {
     res.status(404).render('error', { message: 'Photo not found.', layout: false })
   } else {
     const comments = await business.getComments(photoId)
-    const username = sessionData ?  sessionData.username : undefined
-    const isOwner = sessionData && sessionData.userId && Number(sessionData.userId)=== Number(photo.owner)
-    res.render('photos', {isOwner, photo, comments,username, layout: false })
+    const username = sessionData ? sessionData.username : undefined
+    const isOwner = sessionData && sessionData.userId && Number(sessionData.userId) === Number(photo.owner)
+    res.render('photos', { isOwner, photo, comments, username, layout: false })
   }
 })
 
@@ -182,23 +182,31 @@ app.post('/photos/:id/comment', async (req, res) => {
   const text = req.body.text.trim()
   const sessionKey = req.cookies.sessionKey
 
-  // getSessionData() now directly returns the data object
   const sessionData = await business.getSessionData(sessionKey)
   const username = sessionData ? sessionData.username : null
+  const userId = sessionData ? sessionData.userId : null
 
   if (!username) {
-    res.redirect(`/photos/${photoId}?message=You must be logged in to comment`)
-    return
+    return res.redirect(`/photos/${photoId}?message=You must be logged in to comment`)
   }
 
   if (!text) {
-    res.redirect(`/photos/${photoId}?message=Comment cannot be empty`)
-    return
+    return res.redirect(`/photos/${photoId}?message=Comment cannot be empty`)
   }
 
   await business.addComment(photoId, username, text)
+  const photo = await business.getPhotoDetails(photoId)
+
+  if (photo && Number(photo.owner) !== Number(userId)) {
+    await business.addNotification(
+      photo.owner,
+      photoId,
+      `${username} commented on your photo`
+    )
+  }
   res.redirect(`/photos/${photoId}`)
 })
+
 
 /**
  * Renders the edit page for a specific photo.  
@@ -222,7 +230,7 @@ app.post('/photos/:id/edit', async (req, res) => {
   const sessionKey = req.cookies.sessionKey
   const { title, description } = req.body
   const phototype = req.body.visibility
-  await business.updatePhotoDetails(photoId, title, description, phototype,sessionKey)
+  await business.updatePhotoDetails(photoId, title, description, phototype, sessionKey)
   res.redirect(`/photos/${photoId}`)
 })
 
@@ -252,13 +260,13 @@ app.get('/search', async (req, res) => {
 })
 
 app.get('/notifications', async (req, res) => {
-    const sessionData = await business.getSessionData(req.cookies.sessionKey)
-    if (!sessionData) {
-        return res.redirect('/?message=Please log in first')
-    }
+  const sessionData = await business.getSessionData(req.cookies.sessionKey)
+  if (!sessionData) {
+    return res.redirect('/?message=Please log in first')
+  }
 
-    const notifications = await business.getNotifications(sessionData.userId)
-    res.render('notifications', { notifications, layout: false })
+  const notifications = await business.getNotifications(sessionData.userId)
+  res.render('notifications', { notifications, layout: false })
 })
 
 

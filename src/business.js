@@ -238,6 +238,12 @@ async function addComment(photoId, username, text) {
       `User ${username} commented:\n\n"${text}"`
     )
   }
+  // Add notification (skip if commenter is the owner)
+  if (photo.owner !== owner.userID && photo.owner !== username) {
+    await addNotification(photo.owner, photoId, `${username} commented on your photo`)
+  }
+
+  return { success: true }
 }
 
 /**
