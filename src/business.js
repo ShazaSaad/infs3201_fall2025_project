@@ -237,6 +237,12 @@ async function addComment(photoId, username, text) {
       `User ${username} commented:\n\n"${text}"`
     )
   }
+  // Add notification (skip if commenter is the owner)
+  if (photo.owner !== owner.userID && photo.owner !== username) {
+    await addNotification(photo.owner, photoId, `${username} commented on your photo`)
+  }
+
+  return { success: true }
 }
 
 /**
@@ -276,6 +282,16 @@ async function searchPhotos(query, userId) {
   return results
 }
 
+async function addNotification(userId, photoId, message) {
+    const notif = { userId, photoId, message }
+    return await persistence.saveNotification(notif)
+}
+
+async function getNotifications(userId) {
+    return await persistence.getNotifications(userId)
+}
+
+
 module.exports = {
   listAlbums,
   updatePhotoDetails,
@@ -289,5 +305,7 @@ module.exports = {
   startSession,
   getSessionData,
   deleteSession,
-  searchPhotos
+  searchPhotos,
+  getNotifications,
+  addNotification
 }

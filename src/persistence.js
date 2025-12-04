@@ -243,6 +243,26 @@ async function getUserById(userId) {
     return await db.collection('users').findOne({ userID: userId })
 }
 
+async function getNotifications(userId) {
+    await connectDatabase()
+    const db = client.db('infs3201_fall2025')
+    const notifications = db.collection('notifications')
+
+    return await notifications
+        .find({ userId: Number(userId) })
+        .sort({ timestamp: -1 })
+        .toArray()
+}
+
+async function saveNotification(notif) {
+    await connectDatabase()
+    const db = client.db('infs3201_fall2025')
+    const notifications = db.collection('notifications')
+    notif.timestamp = new Date()
+    notif.read = false
+
+    await notifications.insertOne(notif)
+}
 
 module.exports = {
     loadPhotos,
@@ -256,6 +276,8 @@ module.exports = {
     saveComment,
     loadComments,
     deleteSession,
-    getUserById
+    getUserById,
+    saveNotification,
+    getNotifications
 }
 

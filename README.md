@@ -55,7 +55,7 @@ INFS3201_FALL2025_PROJECT/
  ├─ src/
  |   ├── business.js
  |   ├── presentation.js <-- unused 
- |   ├── notifications.js <-- a single module to send notifications
+ |   ├── notifications.js <-- a single module to send notifications in the console (the final notification functionality shows in a handlebar)
  |   └── persistence.js   
  ├─ views/
  |   ├─ layouts/
@@ -67,6 +67,7 @@ INFS3201_FALL2025_PROJECT/
  │   ├─ login.hbs
  │   ├─ registration.hbs
  │   ├─ search.hbs
+ │   ├─ notifications.hbs
  │   └── editphoto.hbs
  ├─ .gitignore
  ├─ app.js

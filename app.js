@@ -36,7 +36,7 @@ app.use(fileUpload({
   createParentPath: true
 }))
   */
- app.use(fileUpload())
+app.use(fileUpload())
 /**
  * Renders the homepage with a list of albums.  
  * GET /
@@ -138,64 +138,15 @@ app.get('/albums/:name', async (req, res) => {
   }
 })
 
-/*
-app.post("/albums/:name/upload", async (req, res) => {
-  const sessionkey= req.cookies.sessionKey
-  const sessionData = await business.getSessionData(sessionkey)
-  const albumName = req.params.name
-  const uploaded = req.files.uploaded_photo
-
-  try {
-    if (!req.files || !req.files.uploaded_photo) {
-      return res.redirect(`/albums/${albumName}?error=No File Uploaded`)
-    }
-    const allowedTypes = ['image/jpeg', 'image/png', 'image/jpg']
-
-
-    if (!allowedTypes.includes(uploaded.mimetype)) {//checking file type and generates 
-      //upload new photo to folder photos as temporary location
-      return res.redirect(`/albums/${albumName}?error=invalid file type`)
-    }
-    if (allowedTypes.includes(uploaded.mimetype)) {
-      const filepath = __dirname+'/public/photos/'+Date.now()+'_'+uploaded.name
-      await uploaded.mv(filepath)
-      await business.addPhoto(sessionData.userId, uploaded.name, albumName)
-      return res.redirect(`/albums/${albumName}/?success=uploade successfully`)
-    }
-
-  } catch (error) {
-    return res.redirect(`/albums/${albumName}?error = Upload faild`)
-  }
-
-})
-*/
 
 app.post("/albums/:name/upload", async (req, res) => {
-  /*
-  let fileInfo= req.files.uploaded_photo
+
   let albumName = req.params.name
   let sessionKey = req.cookies.sessionKey
   let sessionData = await business.getSessionData(sessionKey)
-  let owner= sessionData.userId
-  let filename = fileInfo.name
-  console.log("session id",owner )
-  let result = await business.albumPhotoListByowner(albumName,owner)
-  let addition_process = await business.addPhoto(owner,filename,albumName)
-  //console.log(addition_process)
-  console.log("file\n: ",fileInfo)
-  res.status(302).render('albums', {
-        albumName,
-        photos: result.data,
-        error: req.query.error,
-        success: req.query.success,
-        layout: false
-      })
-  */
-  
-  let albumName = req.params.name
-  let sessionKey = req.cookies.sessionKey
-  let sessionData = await business.getSessionData(sessionKey)
-//check if user logged in
+  const result = await business.albumPhotoListByowner(albumName, sessionData.userId)
+  let owner = sessionData.userId
+  //check if user logged in
   if (!sessionData) {
     res.status(403).render('error', { message: "Not permitted to upload.. please login!", layout: false })
   }
@@ -215,18 +166,20 @@ app.post("/albums/:name/upload", async (req, res) => {
   //console.log("Temporary file path on disk: ", uploaded.tempFilePath)
 
 
-  let filename= Date.now() +"_"+path.basename(uploaded.name)
-  let finalPath = path.join(__dirname,'Public','photos', filename)
-  try{
+  let filename = Date.now() + "_" + path.basename(uploaded.name)
+  let finalPath = path.join(__dirname, 'Public', 'photos', filename)
+  try {
     await uploaded.mv(finalPath)
-    await business.addPhoto(sessionData.userId,filename, albumName)
-    let addition_process =await business.addPhoto(sessionData.userId,filename, albumName)
-    if(addition_process.status){
-      return res.status(302).redirect(`/albums/${albumName}?success=uploaded successfully`)
-    }else{
+    let addition_process = await business.addPhoto(sessionData.userId, filename, albumName)
+
+    if (addition_process.status) {
+
+      let res = await business.albumPhotoListByowner(albumName, owner)
+      return res.status(302).redirect(`/albums/${albumName}?success=successfully uploaded`)
+    } else {
       return res.status(400).redirect(`/albums/${albumName}?error=failed to save photo info`)
     }
-  }catch(err){
+  } catch (err) {
     console.error(err)
     return res.redirect(`/albums/${albumName}?error=Upload failed`)
   }
@@ -262,23 +215,31 @@ app.post('/photos/:id/comment', async (req, res) => {
   const text = req.body.text.trim()
   const sessionKey = req.cookies.sessionKey
 
-  // getSessionData() now directly returns the data object
   const sessionData = await business.getSessionData(sessionKey)
   const username = sessionData ? sessionData.username : null
+  const userId = sessionData ? sessionData.userId : null
 
   if (!username) {
-    res.redirect(`/photos/${photoId}?message=You must be logged in to comment`)
-    return
+    return res.redirect(`/photos/${photoId}?message=You must be logged in to comment`)
   }
 
   if (!text) {
-    res.redirect(`/photos/${photoId}?message=Comment cannot be empty`)
-    return
+    return res.redirect(`/photos/${photoId}?message=Comment cannot be empty`)
   }
 
   await business.addComment(photoId, username, text)
+  const photo = await business.getPhotoDetails(photoId)
+
+  if (photo && Number(photo.owner) !== Number(userId)) {
+    await business.addNotification(
+      photo.owner,
+      photoId,
+      `${username} commented on your photo`
+    )
+  }
   res.redirect(`/photos/${photoId}`)
 })
+
 
 /**
  * Renders the edit page for a specific photo.  
@@ -330,6 +291,17 @@ app.get('/search', async (req, res) => {
   const results = await business.searchPhotos(q, userId)
   res.render('search', { query: q, results, layout: false })
 })
+
+app.get('/notifications', async (req, res) => {
+  const sessionData = await business.getSessionData(req.cookies.sessionKey)
+  if (!sessionData) {
+    return res.redirect('/?message=Please log in first')
+  }
+
+  const notifications = await business.getNotifications(sessionData.userId)
+  res.render('notifications', { notifications, layout: false })
+})
+
 
 // Start the server
 app.listen(8000, () => console.log('Server running'))
