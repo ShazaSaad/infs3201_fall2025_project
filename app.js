@@ -164,7 +164,6 @@ app.post("/albums/:name/upload", async (req, res) => {
   // the temporary file
   //console.log("Temporary file path on disk: ", uploaded.tempFilePath)
 
-
   let filename = Date.now() + "_" + path.basename(uploaded.name)
   let finalPath = path.join(__dirname, 'Public', 'photos', filename)
   try {
