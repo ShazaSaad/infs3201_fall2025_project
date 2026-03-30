@@ -80,13 +80,7 @@ INFS3201_FALL2025_PROJECT/
 ## Database Connection
 
 **Connection String:**
-
-```
-mongodb+srv://60301815:60301815@60301815.kxwbpk3.mongodb.net/
-```
-
-**Username:** `60301815`
-**Password:** `60301815`
+Connect to the MongoDB database
 
 ---
 
